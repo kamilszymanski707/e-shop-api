@@ -1,0 +1,14 @@
+type Query {
+    getProductsByQuery(input: ProductQueryInput): [ProductOutput]
+}
+
+type Mutation {
+    createProduct(input: ProductCreateInput): ProductOutput
+    updateProduct(input: ProductUpdateInput): ProductOutput
+    deleteProduct(id: String): Boolean
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}

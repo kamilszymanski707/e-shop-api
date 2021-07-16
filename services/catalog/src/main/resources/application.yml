@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      port: 27017
+      host: 127.0.0.1
+      username: prod
+      password: DgcePv9JrjcmNUHY
+      database: products_db
+      authentication-database: admin
+  application:
+    name: catalog
+server:
+  port: 9001
+eureka:
+  client:
+    service-url:
+      default-zone: http://127.0.0.1:8761/eureka/
+graphql:
+  servlet:
+    exception-handlers-enabled: true

@@ -1,0 +1,28 @@
+server:
+  port: 80
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods:
+              - POST
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: catalog
+          uri: lb://catalog/
+          predicates:
+            - Path=/catalog/**
+          filters:
+            - RewritePath=/catalog/(?<path>.*), /$\{path}
+            - RemoveRequestHeader=Cookie
+eureka:
+  client:
+    service-url:
+      default-zone: http://127.0.0.1:8761/eureka/

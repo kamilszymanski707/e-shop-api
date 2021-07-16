@@ -1,0 +1,27 @@
+enum ProductCategory {
+    ELECTRONICS
+    AUTOMOTIVE
+}
+
+type ProductOutput {
+    id: String!
+    name: String!
+    category: ProductCategory!
+}
+
+input ProductCreateInput {
+    name: String!
+    category: ProductCategory!
+}
+
+input ProductUpdateInput {
+    id: String!
+    name: String!
+    category: ProductCategory!
+}
+
+input ProductQueryInput {
+    id: String
+    name: String
+    category: ProductCategory
+}
