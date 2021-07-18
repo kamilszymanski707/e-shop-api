@@ -7,17 +7,20 @@ type ProductOutput {
     id: String!
     name: String!
     category: ProductCategory!
+    price: Float
 }
 
 input ProductCreateInput {
     name: String!
     category: ProductCategory!
+    price: Float!
 }
 
 input ProductUpdateInput {
     id: String!
     name: String!
     category: ProductCategory!
+    price: Float!
 }
 
 input ProductQueryInput {

@@ -18,11 +18,12 @@ internal class ProductQueryService(
 
     val strictDef = arrayOf("id", "category")
     val contextDef = arrayOf("name")
+    val excludedDef = arrayOf("price")
 
     fun getProductsByQuery(input: ProductQueryInput): List<ProductOutput> =
         mongoTemplate.find(
             Query().also { setConditions(input, it) }, Product::class.java).stream()
-            .map { ProductOutput(it.id!!, it.name, it.category) }
+            .map { ProductOutput(it.id!!, it.name, it.category, it.price) }
             .toList()
 
     private fun setConditions(input: ProductQueryInput, query: Query) =
@@ -30,8 +31,9 @@ internal class ProductQueryService(
             if (
                 it.visibility == PUBLIC
             ) {
-                val value = it.getter.call(input)
+                if (excludedDef.contains(it.name)) return@forEach
 
+                val value = it.getter.call(input)
                 if (value != null) {
                     if (strictDef.contains(it.name))
                         query

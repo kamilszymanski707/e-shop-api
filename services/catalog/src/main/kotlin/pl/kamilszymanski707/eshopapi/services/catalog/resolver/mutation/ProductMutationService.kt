@@ -1,9 +1,10 @@
 package pl.kamilszymanski707.eshopapi.services.catalog.resolver.mutation
 
-import graphql.GraphQLException
 import org.springframework.stereotype.Service
 import pl.kamilszymanski707.eshopapi.services.catalog.data.domain.Product
 import pl.kamilszymanski707.eshopapi.services.catalog.data.repository.ProductRepository
+import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceFoundException
+import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.resolver.ProductOutput
 
 @Service
@@ -13,41 +14,34 @@ internal class ProductMutationService(
 
     fun createProduct(input: ProductCreateInput): ProductOutput {
         val optionalProduct = productRepository.findByName(input.name)
-        if (optionalProduct.isPresent) {
-            throw GraphQLException("Product with name: ${input.name} already exist.")
-        }
+        if (optionalProduct.isPresent)
+            throw ResourceFoundException("Product with name: ${input.name} already exist.")
 
-        var product = Product(null, input.name, input.category)
+        var product = Product(null, input.name, input.category, input.price)
         product = productRepository.save(product)
-        return ProductOutput(product.id!!, product.name, product.category)
+        return ProductOutput(product.id!!, product.name, product.category, input.price)
     }
 
     fun updateProduct(input: ProductUpdateInput): ProductOutput {
         var optionalProduct = productRepository.findById(input.id)
-        if (optionalProduct.isEmpty) {
-            throw GraphQLException("Product with id: ${input.id} not found.")
-        }
+        if (optionalProduct.isEmpty)
+            throw ResourceNotFoundException("Product with id: ${input.id} not found.")
 
         optionalProduct = productRepository.findByName(input.name)
-        if (optionalProduct.isPresent && optionalProduct.get().name != input.name) {
-            throw GraphQLException("Product with name: ${input.name} already exist.")
-        }
+        if (optionalProduct.isPresent && optionalProduct.get().name != input.name)
+            throw ResourceFoundException("Product with name: ${input.name} already exist.")
 
-        var product = Product(input.id, input.name, input.category)
+        var product = Product(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)
 
-        return ProductOutput(product.id!!, product.name, product.category)
+        return ProductOutput(product.id!!, product.name, product.category, input.price)
     }
 
     fun deleteProduct(id: String): Boolean {
-        val optionalProduct = productRepository.findById(id)
-        if (optionalProduct.isEmpty) {
-            throw GraphQLException("Product with id: $id not found.")
-        }
+        val product = productRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Product with id: $id not found.") }
 
-        val product = optionalProduct.get()
         productRepository.delete(product)
-
-        return productRepository.existsById(id)
+        return !productRepository.existsById(id)
     }
 }

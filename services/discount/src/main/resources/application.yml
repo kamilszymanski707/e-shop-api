@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  datasource:
+    username: prod
+    password: bjYZGWPWbe2DPrFr
+    url: jdbc:postgresql://127.0.0.1:5432/discount_db
+  application:
+    name: discount
+server:
+  port: 9002
+eureka:
+  client:
+    service-url:
+      default-zone: http://127.0.0.1:8761/eureka/

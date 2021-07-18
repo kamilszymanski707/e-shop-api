@@ -18,3 +18,11 @@ eureka:
 graphql:
   servlet:
     exception-handlers-enabled: true
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
