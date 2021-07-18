@@ -1,4 +1,11 @@
+keycloak-issuer-uri: http://localhost:8080/auth/realms/e-shop
+
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak-issuer-uri}
   jpa:
     hibernate:
       ddl-auto: create

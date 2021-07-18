@@ -1,16 +1,36 @@
+route-prefix: /e-shop/api/v1/
+keycloak-issuer-uri: http://127.0.0.1:8080/auth/realms/e-shop/
+
 server:
   port: 80
 spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            token-uri: ${keycloak-issuer-uri}protocol/openid-connect/token
+            authorization-uri: ${keycloak-issuer-uri}protocol/openid-connect/auth
+            userinfo-uri: ${keycloak-issuer-uri}protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+        registration:
+          e-shop:
+            provider: keycloak
+            client-id: e-shop
+            client-secret: f7919d79-bb0a-4527-b0ba-9abe7b95b27a
+            authorization-grant-type: client_credentials
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
   application:
     name: gateway
   cloud:
     gateway:
+      default-filters:
+        - TokenRelay
       globalcors:
         cors-configurations:
           '[/**]':
             allowedOrigins: '*'
-            allowedMethods:
-              - POST
+            allowedMethods: '*'
       discovery:
         locator:
           enabled: true
@@ -18,16 +38,16 @@ spring:
         - id: catalog
           uri: lb://catalog/
           predicates:
-            - Path=/catalog/**
+            - Path=${route-prefix}catalog/**
           filters:
-            - RewritePath=/catalog/(?<path>.*), /$\{path}
+            - RewritePath=${route-prefix}catalog/(?<path>.*), /$\{path}
             - RemoveRequestHeader=Cookie
         - id: discount
           uri: lb://discount/
           predicates:
-            - Path=/discount/**
+            - Path=${route-prefix}discount/**
           filters:
-            - RewritePath=/discount/(?<path>.*), /$\{path}
+            - RewritePath=${route-prefix}discount/(?<path>.*), /$\{path}
             - RemoveRequestHeader=Cookie
 eureka:
   client:
