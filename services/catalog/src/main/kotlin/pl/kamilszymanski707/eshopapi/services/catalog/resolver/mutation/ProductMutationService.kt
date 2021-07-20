@@ -1,8 +1,10 @@
 package pl.kamilszymanski707.eshopapi.services.catalog.resolver.mutation
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import pl.kamilszymanski707.eshopapi.services.catalog.data.domain.Product
 import pl.kamilszymanski707.eshopapi.services.catalog.data.repository.ProductRepository
+import pl.kamilszymanski707.eshopapi.services.catalog.event.ProductPriceUpdatedEvent
 import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.resolver.ProductOutput
@@ -10,6 +12,7 @@ import pl.kamilszymanski707.eshopapi.services.catalog.resolver.ProductOutput
 @Service
 internal class ProductMutationService(
     private val productRepository: ProductRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
 
     fun createProduct(input: ProductCreateInput): ProductOutput {
@@ -34,6 +37,7 @@ internal class ProductMutationService(
         var product = Product(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)
 
+        applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(this, product))
         return ProductOutput(product.id!!, product.name, product.category, input.price)
     }
 

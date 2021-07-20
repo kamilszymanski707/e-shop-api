@@ -1,9 +1,11 @@
 package pl.kamilszymanski707.eshopapi.services.discount.resolver.mutation
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import pl.kamilszymanski707.eshopapi.services.discount.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.services.discount.data.domain.Coupon
 import pl.kamilszymanski707.eshopapi.services.discount.data.repository.CouponRepository
+import pl.kamilszymanski707.eshopapi.services.discount.event.CouponAmountUpdatedEvent
 import pl.kamilszymanski707.eshopapi.services.discount.exception.ResourceFoundException
 import pl.kamilszymanski707.eshopapi.services.discount.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.discount.resolver.CouponOutput
@@ -12,6 +14,7 @@ import pl.kamilszymanski707.eshopapi.services.discount.resolver.CouponOutput
 internal class CouponMutationService(
     private val couponRepository: CouponRepository,
     private val catalogClient: CatalogClient,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
 
     fun createCoupon(input: CouponCreateInput): CouponOutput {
@@ -53,6 +56,7 @@ internal class CouponMutationService(
         var coupon = Coupon(couponId, description, products[0].id!!, amount)
         coupon = couponRepository.save(coupon)
 
+        applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(this, coupon))
         return CouponOutput(coupon.id!!, coupon.description, coupon.productId, coupon.amount)
     }
 }

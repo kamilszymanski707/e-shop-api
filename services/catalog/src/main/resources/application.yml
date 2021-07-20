@@ -3,6 +3,9 @@ base-local-url: http://${base-local-host}
 keycloak-issuer-uri: http://localhost:8080/auth/realms/e-shop
 
 spring:
+  rabbitmq:
+    username: prod
+    password: 3kWr7WvWBpsJVztS
   security:
     oauth2:
       resourceserver:
