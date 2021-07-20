@@ -5,7 +5,12 @@ rewrited-path-regex: /$\{path}
 keycloak-token-openid-uri: ${base-local-url}:8080/auth/realms/e-shop/protocol/openid-connect/
 
 server:
-  port: 80
+  ssl:
+    key-alias: gateway
+    key-store-password: zP6VS8tn8tP8qAHM
+    key-store: classpath:gateway-cert.p12
+    key-store-type: PKCS12
+  port: 443
 spring:
   security:
     oauth2:
@@ -27,6 +32,9 @@ spring:
     name: gateway
   cloud:
     gateway:
+      httpclient:
+        ssl:
+          use-insecure-trust-manager: true
       default-filters:
         - TokenRelay
       discovery:
