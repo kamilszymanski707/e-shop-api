@@ -1,3 +1,5 @@
+base-local-host: 127.0.0.1
+base-local-url: http://${base-local-host}
 keycloak-issuer-uri: http://localhost:8080/auth/realms/e-shop
 
 spring:
@@ -7,13 +9,11 @@ spring:
         jwt:
           issuer-uri: ${keycloak-issuer-uri}
   jpa:
-    hibernate:
-      ddl-auto: create
     show-sql: true
   datasource:
     username: prod
     password: bjYZGWPWbe2DPrFr
-    url: jdbc:postgresql://127.0.0.1:5432/discount_db
+    url: jdbc:postgresql://${base-local-host}:5432/discount_db
   application:
     name: discount
 server:
@@ -21,4 +21,7 @@ server:
 eureka:
   client:
     service-url:
-      default-zone: http://127.0.0.1:8761/eureka/
+      default-zone: ${base-local-url}:8761/eureka/
+graphql:
+  servlet:
+    exception-handlers-enabled: true

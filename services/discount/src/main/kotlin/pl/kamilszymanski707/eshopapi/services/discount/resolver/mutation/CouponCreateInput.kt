@@ -1,12 +1,10 @@
-package pl.kamilszymanski707.eshopapi.services.discount.dto
+package pl.kamilszymanski707.eshopapi.services.discount.resolver.mutation
 
+import org.hibernate.validator.constraints.Range
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-data class CouponUpdateDto(
-
-    @field:NotNull(message = "Coupon id cannot be empty.")
-    val id: Int,
+internal data class CouponCreateInput(
 
     @field:NotNull(
         message = "Coupon description cannot be empty.")
@@ -19,7 +17,7 @@ data class CouponUpdateDto(
     @field:NotNull(message = "Coupon product id cannot be empty.")
     val productId: String,
 
-    @field:Size(min = 0, max = 100)
+    @field:Range(min = 0, max = 100, message = "Coupon amount must be between 0 and 100.")
     @field:NotNull(message = "Coupon amount cannot be empty.")
     val amount: Int,
 )

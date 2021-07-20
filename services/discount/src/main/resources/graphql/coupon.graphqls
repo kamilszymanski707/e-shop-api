@@ -1,0 +1,25 @@
+type CouponOutput {
+    id: Int!
+    description: String!
+    productId: String!
+    amount: Int!
+}
+
+input CouponCreateInput {
+    description: String!
+    productId: String!
+    amount: Int!
+}
+
+input CouponUpdateInput {
+    id: Int!
+    description: String!
+    productId: String!
+    amount: Int!
+}
+
+input CouponQueryInput {
+    id: Int
+    description: String
+    productId: String
+}

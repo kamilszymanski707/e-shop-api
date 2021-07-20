@@ -20,9 +20,9 @@ internal class ProductQueryService(
     val contextDef = arrayOf("name")
     val excludedDef = arrayOf("price")
 
-    fun getProductsByQuery(input: ProductQueryInput): List<ProductOutput> =
+    fun getProductsByQuery(input: ProductQueryInput?): List<ProductOutput> =
         mongoTemplate.find(
-            Query().also { setConditions(input, it) }, Product::class.java).stream()
+            Query().also { input?.let { query -> setConditions(query, it) } }, Product::class.java).stream()
             .map { ProductOutput(it.id!!, it.name, it.category, it.price) }
             .toList()
 

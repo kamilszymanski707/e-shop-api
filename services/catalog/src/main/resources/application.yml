@@ -1,3 +1,5 @@
+base-local-host: 127.0.0.1
+base-local-url: http://${base-local-host}
 keycloak-issuer-uri: http://localhost:8080/auth/realms/e-shop
 
 spring:
@@ -9,7 +11,7 @@ spring:
   data:
     mongodb:
       port: 27017
-      host: 127.0.0.1
+      host: ${base-local-host}
       username: prod
       password: DgcePv9JrjcmNUHY
       database: products_db
@@ -21,10 +23,7 @@ server:
 eureka:
   client:
     service-url:
-      default-zone: http://127.0.0.1:8761/eureka/
-graphql:
-  servlet:
-    exception-handlers-enabled: true
+      default-zone: ${base-local-url}:8761/eureka/
 logging:
   level:
     org:
@@ -33,3 +32,6 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
+graphql:
+  servlet:
+    exception-handlers-enabled: true

@@ -8,11 +8,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 
+import static org.springframework.http.HttpMethod.POST
+
 class EShopSecurityConfig extends WebSecurityConfigurerAdapter {
 
     def whitelist = new HashMap()
 
-    EShopSecurityConfig(Map<HttpMethod, String[]> whitelist) {
+    EShopSecurityConfig(
+            Map<HttpMethod, String[]> whitelist =
+                    Map.ofEntries(new MapEntry(POST, new String[]{"/graphql"}))) {
+
         this.whitelist = whitelist
     }
 

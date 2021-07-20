@@ -10,7 +10,7 @@ internal class RestTemplateConfig {
 
     @Bean
     @LoadBalanced
-    fun restTemplate(): RestTemplate {
+    fun restTemplateBean(): RestTemplate {
         return RestTemplate()
     }
 }

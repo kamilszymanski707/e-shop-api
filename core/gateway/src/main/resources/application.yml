@@ -1,5 +1,8 @@
+base-local-url: http://127.0.0.1
 route-prefix: /e-shop/api/v1/
-keycloak-issuer-uri: http://127.0.0.1:8080/auth/realms/e-shop/
+path-regex: /(?<path>.*)
+rewrited-path-regex: /$\{path}
+keycloak-token-openid-uri: ${base-local-url}:8080/auth/realms/e-shop/protocol/openid-connect/
 
 server:
   port: 80
@@ -9,9 +12,9 @@ spring:
       client:
         provider:
           keycloak:
-            token-uri: ${keycloak-issuer-uri}protocol/openid-connect/token
-            authorization-uri: ${keycloak-issuer-uri}protocol/openid-connect/auth
-            userinfo-uri: ${keycloak-issuer-uri}protocol/openid-connect/userinfo
+            token-uri: ${keycloak-token-openid-uri}token
+            authorization-uri: ${keycloak-token-openid-uri}auth
+            userinfo-uri: ${keycloak-token-openid-uri}userinfo
             user-name-attribute: preferred_username
         registration:
           e-shop:
@@ -26,11 +29,6 @@ spring:
     gateway:
       default-filters:
         - TokenRelay
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: '*'
-            allowedMethods: '*'
       discovery:
         locator:
           enabled: true
@@ -40,16 +38,16 @@ spring:
           predicates:
             - Path=${route-prefix}catalog/**
           filters:
-            - RewritePath=${route-prefix}catalog/(?<path>.*), /$\{path}
+            - RewritePath=${route-prefix}catalog${path-regex}, ${rewrited-path-regex}
             - RemoveRequestHeader=Cookie
         - id: discount
           uri: lb://discount/
           predicates:
             - Path=${route-prefix}discount/**
           filters:
-            - RewritePath=${route-prefix}discount/(?<path>.*), /$\{path}
+            - RewritePath=${route-prefix}discount${path-regex}, ${rewrited-path-regex}
             - RemoveRequestHeader=Cookie
 eureka:
   client:
     service-url:
-      default-zone: http://127.0.0.1:8761/eureka/
+      default-zone: ${base-local-url}:8761/eureka/

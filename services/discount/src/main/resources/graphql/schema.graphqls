@@ -1,0 +1,14 @@
+type Query {
+    getCouponsByQuery(input: CouponQueryInput): [CouponOutput!]
+}
+
+type Mutation {
+    createCoupon(input: CouponCreateInput!): CouponOutput!
+    updateCoupon(input: CouponUpdateInput!): CouponOutput!
+    deleteCoupon(id: Int!): Boolean!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}

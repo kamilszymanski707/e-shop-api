@@ -7,7 +7,7 @@ type ProductOutput {
     id: String!
     name: String!
     category: ProductCategory!
-    price: Float
+    price: Float!
 }
 
 input ProductCreateInput {

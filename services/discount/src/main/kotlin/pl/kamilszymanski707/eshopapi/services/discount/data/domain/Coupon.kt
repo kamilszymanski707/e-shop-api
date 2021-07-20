@@ -1,5 +1,6 @@
 package pl.kamilszymanski707.eshopapi.services.discount.data.domain
 
+import pl.kamilszymanski707.eshopapi.services.discount.data.QueryableCoupon
 import javax.persistence.*
 import javax.persistence.GenerationType.SEQUENCE
 
@@ -37,4 +38,4 @@ data class Coupon(
         name = "amount",
         nullable = false)
     val amount: Int,
-)
+) : QueryableCoupon

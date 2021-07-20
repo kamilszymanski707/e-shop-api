@@ -9,6 +9,6 @@ internal class CatalogQueryResolver(
     private val productQueryService: ProductQueryService,
 ) : GraphQLQueryResolver {
 
-    fun getProductsByQuery(input: ProductQueryInput): List<ProductOutput> =
+    fun getProductsByQuery(input: ProductQueryInput?): List<ProductOutput> =
         productQueryService.getProductsByQuery(input)
 }

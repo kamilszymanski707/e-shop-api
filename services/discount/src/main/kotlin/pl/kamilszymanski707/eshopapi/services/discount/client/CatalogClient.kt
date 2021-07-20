@@ -1,5 +1,7 @@
 package pl.kamilszymanski707.eshopapi.services.discount.client
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
@@ -11,6 +13,7 @@ import java.math.BigDecimal
 import java.net.URI
 
 interface CatalogClient {
+
     fun getProductsByQuery(
         id: String?,
         name: String?,
@@ -22,6 +25,8 @@ interface CatalogClient {
 internal class CatalogClientImpl(
     private val restTemplate: RestTemplate,
 ) : CatalogClient {
+
+    private val logger: Logger = LoggerFactory.getLogger(CatalogClientImpl::class.java)
 
     private val url = "lb://catalog/graphql"
 
@@ -39,20 +44,19 @@ internal class CatalogClientImpl(
 
         val gql = """
             {
-                "query":
-                    "query {\n  
-                        getProductsByQuery(input: {
-                            id: $idParam, 
-                            name: $nameParam, 
-                            category: $categoryParam            
-                        }) {\n
-                            id\n    
-                            name\n    
-                            category\n    
-                            price\n  
-                            }\n
-                        }"
+                "query": "query {  
+                    getProductsByQuery(input: {
+                        id: $idParam, 
+                        name: $nameParam, 
+                        category: $categoryParam            
+                    }) {
+                        id    
+                        name    
+                        category    
+                        price  
                     }
+                }"
+            }
         """.trimIndent()
 
         try {
@@ -61,6 +65,7 @@ internal class CatalogClientImpl(
                 HttpEntity(gql, headers),
                 ProductOutput::class.java)
         } catch (e: Exception) {
+            logger.error(e.message)
             throw ResourceNotFoundException("Internal Server Error.")
         }
     }

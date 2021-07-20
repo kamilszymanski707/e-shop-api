@@ -2,7 +2,7 @@ package pl.kamilszymanski707.eshopapi.core.gateway.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.http.HttpMethod.*
+import org.springframework.http.HttpMethod.POST
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
@@ -20,10 +20,7 @@ internal class SecurityConfig {
             .authorizeExchange {
                 it
                     .pathMatchers(POST, "${routePrefix}catalog/**").permitAll()
-                    .pathMatchers(GET, "${routePrefix}discount/**").permitAll()
                     .pathMatchers(POST, "${routePrefix}discount/**").permitAll()
-                    .pathMatchers(PUT, "${routePrefix}discount/**").permitAll()
-                    .pathMatchers(DELETE, "${routePrefix}discount/**").permitAll()
                     .anyExchange().authenticated()
             }
             .oauth2Client().and()
