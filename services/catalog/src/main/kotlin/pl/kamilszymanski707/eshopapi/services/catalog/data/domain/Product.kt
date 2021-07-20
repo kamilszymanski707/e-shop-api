@@ -17,8 +17,8 @@ data class Product(
     @Indexed(unique = true)
     val name: String,
 
+    @Indexed
     @Field(name = "category")
-    @Indexed(unique = true)
     val category: ProductCategory,
 
     @Field(name = "price")

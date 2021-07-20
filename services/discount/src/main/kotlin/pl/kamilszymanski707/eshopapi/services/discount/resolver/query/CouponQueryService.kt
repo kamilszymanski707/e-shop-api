@@ -9,7 +9,7 @@ internal class CouponQueryService(
     private val couponDao: CouponDao,
 ) {
 
-    fun getCouponsByProductId(input: CouponQueryInput?): List<CouponOutput> =
+    fun getCouponsByQuery(input: CouponQueryInput?): List<CouponOutput> =
         couponDao.findByQuery(input)
             .map { CouponOutput(it.id!!, it.description, it.productId, it.amount) }
 }

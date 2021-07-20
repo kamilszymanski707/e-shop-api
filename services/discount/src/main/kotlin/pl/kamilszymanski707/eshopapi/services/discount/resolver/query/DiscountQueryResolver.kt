@@ -10,5 +10,5 @@ internal class DiscountQueryResolver(
 ) : GraphQLQueryResolver {
 
     fun getCouponsByQuery(input: CouponQueryInput?): List<CouponOutput> =
-        couponQueryService.getCouponsByProductId(input)
+        couponQueryService.getCouponsByQuery(input)
 }
