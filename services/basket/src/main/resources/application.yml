@@ -1,0 +1,29 @@
+base-local-host: 127.0.0.1
+base-local-url: http://${base-local-host}
+keycloak-issuer-uri: http://localhost:8080/auth/realms/e-shop
+
+spring:
+  redis:
+    password: LuBeSxG73CtAJhPD
+    database: 0
+    port: 6379
+    host: ${base-local-host}
+  rabbitmq:
+    username: prod
+    password: 3kWr7WvWBpsJVztS
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak-issuer-uri}
+  application:
+    name: basket
+server:
+  port: 9003
+eureka:
+  client:
+    service-url:
+      default-zone: ${base-local-url}:8761/eureka/
+graphql:
+  servlet:
+    exception-handlers-enabled: true

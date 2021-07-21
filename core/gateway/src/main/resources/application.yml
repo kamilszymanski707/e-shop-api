@@ -55,6 +55,13 @@ spring:
           filters:
             - RewritePath=${route-prefix}discount${path-regex}, ${rewrited-path-regex}
             - RemoveRequestHeader=Cookie
+        - id: basket
+          uri: lb://basket/
+          predicates:
+            - Path=${route-prefix}basket/**
+          filters:
+            - RewritePath=${route-prefix}basket{path-regex}, ${rewrited-path-regex}
+            - RemoveRequestHeader=Cookie
 eureka:
   client:
     service-url:
