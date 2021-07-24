@@ -1,5 +1,6 @@
 package pl.kamilszymanski707.eshopapi.services.basket.resolver.query
 
+import org.springframework.context.annotation.Scope
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
@@ -8,6 +9,7 @@ import pl.kamilszymanski707.eshopapi.services.basket.resolver.ShoppingCartItemOu
 import pl.kamilszymanski707.eshopapi.services.basket.resolver.ShoppingCartOutput
 
 @Service
+@Scope("prototype")
 internal class ShoppingCartQueryService(
     private val shoppingCartRepository: ShoppingCartRepository,
 ) {

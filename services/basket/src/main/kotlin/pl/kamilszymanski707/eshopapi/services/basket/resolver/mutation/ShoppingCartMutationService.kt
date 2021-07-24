@@ -25,7 +25,7 @@ internal class ShoppingCartMutationService(
         val principalId = getPrincipalId()
 
         val basket = shoppingCartRepository.findById(principalId)
-            .orElseThrow { ResourceNotFoundException("Basket with for user with id: $principalId does not exists.") }
+            .orElseThrow { ResourceNotFoundException("Basket for user with id: $principalId does not exists.") }
 
         val shoppingCartItemList = updatedItems(input.items)
 
@@ -89,7 +89,7 @@ internal class ShoppingCartMutationService(
         val principalId = getPrincipalId()
 
         val basket = shoppingCartRepository.findById(principalId)
-            .orElseThrow { ResourceNotFoundException("Basket with for user with id: $principalId does not exists.") }
+            .orElseThrow { ResourceNotFoundException("Basket for user with id: $principalId does not exists.") }
 
         shoppingCartRepository.delete(basket)
         return !shoppingCartRepository.existsById(principalId)
