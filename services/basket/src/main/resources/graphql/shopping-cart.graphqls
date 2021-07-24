@@ -1,0 +1,19 @@
+type ShoppingCartOutput {
+    items: [ShoppingCartItemOutput!]
+}
+
+type ShoppingCartItemOutput {
+    productId: String!
+    quantity: Int!
+    price: Float!
+    productName: String!
+}
+
+input ShoppingCartUpdateInput {
+    items: [ShoppingCartItemUpdateInput!]
+}
+
+input ShoppingCartItemUpdateInput {
+    productId: String!
+    quantity: Int!
+}

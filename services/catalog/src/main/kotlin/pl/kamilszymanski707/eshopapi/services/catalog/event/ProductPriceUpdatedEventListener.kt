@@ -13,7 +13,7 @@ internal class ProductPriceUpdatedEventListener(
     private val rabbitTemplate: RabbitTemplate,
 ) : ApplicationListener<ProductPriceUpdatedEvent> {
 
-    val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper()
 
     override fun onApplicationEvent(
         event: ProductPriceUpdatedEvent,

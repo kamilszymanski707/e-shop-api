@@ -25,7 +25,7 @@ spring:
           e-shop:
             provider: keycloak
             client-id: e-shop
-            client-secret: f7919d79-bb0a-4527-b0ba-9abe7b95b27a
+            client-secret: 359b2ad7-6362-4dcc-ac31-48fe2ba9b21e
             authorization-grant-type: client_credentials
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
   application:

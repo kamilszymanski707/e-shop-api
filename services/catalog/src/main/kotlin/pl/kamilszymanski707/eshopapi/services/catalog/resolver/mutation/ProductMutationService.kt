@@ -18,7 +18,7 @@ internal class ProductMutationService(
     fun createProduct(input: ProductCreateInput): ProductOutput {
         val optionalProduct = productRepository.findByName(input.name)
         if (optionalProduct.isPresent)
-            throw ResourceFoundException("Product with name: ${input.name} already exist.")
+            throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
         var product = Product(null, input.name, input.category, input.price)
         product = productRepository.save(product)
@@ -32,7 +32,7 @@ internal class ProductMutationService(
 
         optionalProduct = productRepository.findByName(input.name)
         if (optionalProduct.isPresent && optionalProduct.get().name != input.name)
-            throw ResourceFoundException("Product with name: ${input.name} already exist.")
+            throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
         var product = Product(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)

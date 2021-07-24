@@ -1,4 +1,4 @@
-package pl.kamilszymanski707.eshopapi.services.discount.config
+package pl.kamilszymanski707.eshopapi.services.basket.config
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.context.annotation.Bean

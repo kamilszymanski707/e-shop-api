@@ -15,11 +15,11 @@ class CouponDao {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
-    val strictDef = arrayOf("id", "productId")
-    val contextDef = arrayOf("description")
-    val excludedDef = arrayOf("amount")
+    private val strictDef = arrayOf("id", "productId")
+    private val contextDef = arrayOf("description")
+    private val excludedDef = arrayOf("amount")
 
-    val percentSign = "%"
+    private val percentSign = "%"
 
     fun findByQuery(queryable: QueryableCoupon?): List<Coupon> {
         val cb = entityManager.criteriaBuilder

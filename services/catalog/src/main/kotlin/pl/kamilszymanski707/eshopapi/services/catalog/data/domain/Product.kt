@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
+import pl.kamilszymanski707.eshopapi.services.catalog.data.QueryableProduct
 import java.math.BigDecimal
 
 @Document("products")
@@ -23,7 +24,7 @@ data class Product(
 
     @Field(name = "price")
     val price: BigDecimal,
-)
+) : QueryableProduct
 
 enum class ProductCategory {
     ELECTRONICS,

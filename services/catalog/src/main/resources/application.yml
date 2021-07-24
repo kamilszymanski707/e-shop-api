@@ -17,7 +17,7 @@ spring:
       host: ${base-local-host}
       username: prod
       password: DgcePv9JrjcmNUHY
-      database: products_db
+      database: catalog_db
       authentication-database: admin
   application:
     name: catalog

@@ -1,4 +1,4 @@
-package pl.kamilszymanski707.eshopapi.services.discount.client
+package pl.kamilszymanski707.eshopapi.services.basket.client
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import pl.kamilszymanski707.eshopapi.services.discount.exception.ResourceNotFoundException
+import pl.kamilszymanski707.eshopapi.services.basket.exception.ResourceNotFoundException
 import java.math.BigDecimal
 import java.net.URI
 

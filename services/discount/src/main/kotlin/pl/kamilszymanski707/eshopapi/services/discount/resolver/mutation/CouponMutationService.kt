@@ -20,14 +20,14 @@ internal class CouponMutationService(
     fun createCoupon(input: CouponCreateInput): CouponOutput {
         val optionalCoupon = couponRepository.findByProductId(input.productId)
         if (optionalCoupon.isPresent)
-            throw ResourceFoundException("Coupon for product with id: ${input.productId} already exist.")
+            throw ResourceFoundException("Coupon for product with id: ${input.productId} already exists.")
 
         return saveOrUpdate(null, input.productId, input.description, input.amount)
     }
 
     fun updateCoupon(input: CouponUpdateInput): CouponOutput {
         val coupon = couponRepository.findByProductId(input.productId)
-            .orElseThrow { ResourceNotFoundException("Coupon for product with id: ${input.productId} does not exist.") }
+            .orElseThrow { ResourceNotFoundException("Coupon for product with id: ${input.productId} does not exists.") }
 
         return saveOrUpdate(coupon.id, input.productId, input.description, input.amount)
     }
@@ -47,13 +47,13 @@ internal class CouponMutationService(
         amount: Int,
     ): CouponOutput {
         val productOutput = catalogClient.getProductsByQuery(productId, null, null)
-            ?: throw ResourceNotFoundException("Product with id: $productId does not exist.")
+            ?: throw ResourceNotFoundException("Product with id: $productId does not exists.")
 
         val products = productOutput.data?.getProductsByQuery
         if (products == null || products.isEmpty() || products.size > 1)
-            throw ResourceNotFoundException("Product with id: $productId does not exist.")
+            throw ResourceNotFoundException("Product with id: $productId does not exists.")
 
-        var coupon = Coupon(couponId, description, products[0].id!!, amount)
+        var coupon = Coupon(couponId, description, products[0].id, amount)
         coupon = couponRepository.save(coupon)
 
         applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(this, coupon))

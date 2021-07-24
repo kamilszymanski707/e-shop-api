@@ -1,0 +1,13 @@
+type Query {
+    getBasket: ShoppingCartOutput!
+}
+
+type Mutation {
+    updateBasket(input: ShoppingCartUpdateInput!): ShoppingCartOutput!
+    deleteBasket: Boolean!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
