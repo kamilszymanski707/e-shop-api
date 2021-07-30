@@ -21,6 +21,7 @@ internal class SecurityConfig {
                 it
                     .pathMatchers(POST, "${routePrefix}catalog/**").permitAll()
                     .pathMatchers(POST, "${routePrefix}discount/**").permitAll()
+                    .pathMatchers(POST, "${routePrefix}basket/**").permitAll()
                     .anyExchange().authenticated()
             }
             .oauth2Client().and()

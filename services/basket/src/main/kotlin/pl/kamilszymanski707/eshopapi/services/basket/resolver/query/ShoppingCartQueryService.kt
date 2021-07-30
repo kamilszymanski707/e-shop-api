@@ -21,15 +21,16 @@ internal class ShoppingCartQueryService(
             .orElse(null)
 
         if (basket == null) {
-            basket = ShoppingCart(principalId, listOf())
+            basket = ShoppingCart.createInstance(principalId, listOf())
             basket = shoppingCartRepository.save(basket)
         }
 
         val items = basket.items.stream()
             .map {
                 ShoppingCartItemOutput(
-                    it.productId, it.quantity,
-                    it.price, it.productName)
+                    it.productId!!, it.quantity!!,
+                    it.price!!, it.productName!!
+                )
             }
             .toList()
 

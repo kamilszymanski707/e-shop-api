@@ -60,7 +60,7 @@ spring:
           predicates:
             - Path=${route-prefix}basket/**
           filters:
-            - RewritePath=${route-prefix}basket{path-regex}, ${rewrited-path-regex}
+            - RewritePath=${route-prefix}basket${path-regex}, ${rewrited-path-regex}
             - RemoveRequestHeader=Cookie
 eureka:
   client:

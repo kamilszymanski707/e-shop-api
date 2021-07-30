@@ -6,23 +6,90 @@ import org.springframework.data.redis.core.index.Indexed
 import java.math.BigDecimal
 
 @RedisHash("shopping_cart")
-data class ShoppingCart(
+open class ShoppingCart {
 
-    @Id
-    @Indexed
-    val userId: String,
+    @field:Id
+    @field:Indexed
+    open var userId: String? = null
 
-    val items: List<ShoppingCartItem>,
-)
+    open var items: List<ShoppingCartItem> = ArrayList()
 
-@RedisHash("shopping_cart_item")
-data class ShoppingCartItem(
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-    @Id
-    @Indexed
-    val productId: String,
+        other as ShoppingCart
 
-    val quantity: Int,
-    val price: BigDecimal,
-    val productName: String,
-)
+        if (userId != other.userId) return false
+        if (items != other.items) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = userId?.hashCode() ?: 0
+        result = 31 * result + items.hashCode()
+        return result
+    }
+
+    companion object {
+
+        fun createInstance(
+            userId: String?,
+            items: List<ShoppingCartItem>?,
+        ): ShoppingCart {
+
+            val result = ShoppingCart()
+            result.userId = userId
+            result.items = items ?: ArrayList()
+
+            return result
+        }
+    }
+}
+
+open class ShoppingCartItem {
+
+    open var productId: String? = null
+    open var quantity: Int? = null
+    open var price: BigDecimal? = null
+    open var productName: String? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ShoppingCartItem
+
+        if (productId != other.productId) return false
+        if (quantity != other.quantity) return false
+        if (price != other.price) return false
+        if (productName != other.productName) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = productId?.hashCode() ?: 0
+        result = 31 * result + (quantity ?: 0)
+        result = 31 * result + (price?.hashCode() ?: 0)
+        result = 31 * result + (productName?.hashCode() ?: 0)
+        return result
+    }
+
+    companion object {
+
+        fun createInstance(
+            productId: String?, quantity: Int?,
+            price: BigDecimal?, productName: String?,
+        ): ShoppingCartItem {
+
+            val result = ShoppingCartItem()
+            result.productId = productId
+            result.quantity = quantity
+            result.price = price
+            result.productName = productName
+            return result
+        }
+    }
+}

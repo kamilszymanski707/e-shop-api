@@ -29,7 +29,7 @@ internal class ShoppingCartMutationService(
 
         val shoppingCartItemList = updatedItems(input.items)
 
-        var shoppingCart = ShoppingCart(
+        var shoppingCart = ShoppingCart.createInstance(
             basket.userId, shoppingCartItemList)
 
         shoppingCart = shoppingCartRepository.save(shoppingCart)
@@ -37,8 +37,8 @@ internal class ShoppingCartMutationService(
         val itemsList = shoppingCart.items.stream()
             .map {
                 ShoppingCartItemOutput(
-                    it.productId, it.quantity,
-                    it.price, it.productName)
+                    it.productId!!, it.quantity!!,
+                    it.price!!, it.productName!!)
             }
             .toList()
 
@@ -62,7 +62,7 @@ internal class ShoppingCartMutationService(
 
             val updatedPrice = updatedPrice(productId, searchedProduct.price)
 
-            val shoppingCartItem = ShoppingCartItem(
+            val shoppingCartItem = ShoppingCartItem.createInstance(
                 productId, it.quantity,
                 updatedPrice, searchedProduct.name)
 
@@ -77,9 +77,12 @@ internal class ShoppingCartMutationService(
             null, null, productId)
 
         if (discountOutput != null) {
-            val coupon = discountOutput.data?.getCouponsByQuery?.get(0)
-            if (coupon != null)
-                return price.multiply(BigDecimal(coupon.amount.toDouble() / 100))
+            val coupons = discountOutput.data?.getCouponsByQuery
+            if (coupons?.size == 0)
+                return price
+
+            val coupon = coupons!![0]
+            return price.multiply(BigDecimal(coupon.amount.toDouble() / 100))
         }
 
         return price
