@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=prod
+      - RABBITMQ_DEFAULT_PASS=3kWr7WvWBpsJVztS
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  mongo_catalog:
+    image: mongo:5.0.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=prod
+      - MONGO_INITDB_ROOT_PASSWORD=DgcePv9JrjcmNUHY
+      - MONGO_INITDB_DATABASE=catalog_db
+    ports:
+      - "27017:27017"
+  postgres_discount:
+    image: postgres:13.3-alpine
+    environment:
+      - POSTGRES_USER=prod
+      - POSTGRES_PASSWORD=bjYZGWPWbe2DPrFr
+      - POSTGRES_DB=discount_db
+    ports:
+      - "5432:5432"
+  redis_basket:
+    image: redis:6.2.4-alpine
+    command: redis-server --requirepass LuBeSxG73CtAJhPD --appendonly yes
+    ports:
+      - "6379:6379"
