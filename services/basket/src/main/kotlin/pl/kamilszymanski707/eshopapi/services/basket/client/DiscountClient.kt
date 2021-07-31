@@ -1,15 +1,9 @@
 package pl.kamilszymanski707.eshopapi.services.basket.client
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import pl.kamilszymanski707.eshopapi.services.basket.exception.ResourceNotFoundException
-import java.net.URI
+import pl.kamilszymanski707.eshopapi.lib.utilslib.client.GraphQLClient
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.ClientConstant.Companion.DISCOUNT_SERVICE_URI
 
 interface DiscountClient {
 
@@ -22,20 +16,15 @@ interface DiscountClient {
 
 @Component
 internal class DiscountClientImpl(
-    private val restTemplate: RestTemplate,
-) : DiscountClient {
-
-    private val logger: Logger = LoggerFactory.getLogger(DiscountClient::class.java)
-
-    private val url = "lb://discount/graphql"
+    restTemplate: RestTemplate,
+) : GraphQLClient<CouponOutput>(CouponOutput::class.java, restTemplate),
+    DiscountClient {
 
     override fun getCouponsByQuery(
         id: Int?,
         description: String?,
         productId: String?,
     ): CouponOutput? {
-        val headers = HttpHeaders()
-        headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 
         val idParam = if (id != null) """\"$id\"""" else null
         val descriptionParam = if (description != null) """\"$description\"""" else null
@@ -58,15 +47,7 @@ internal class DiscountClientImpl(
             }
         """.trimIndent()
 
-        try {
-            return restTemplate.postForObject(
-                URI(url),
-                HttpEntity(gql, headers),
-                CouponOutput::class.java)
-        } catch (e: Exception) {
-            logger.error(e.message)
-            throw ResourceNotFoundException("Internal Server Error.")
-        }
+        return query(gql, DISCOUNT_SERVICE_URI)
     }
 }
 

@@ -1,4 +1,4 @@
-package pl.kamilszymanski707.eshopapi.services.catalog.exception
+package pl.kamilszymanski707.eshopapi.lib.utilslib.exception
 
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.web.bind.annotation.ResponseStatus

@@ -2,12 +2,12 @@ package pl.kamilszymanski707.eshopapi.services.discount.resolver.mutation
 
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceFoundException
+import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.discount.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.services.discount.data.domain.Coupon
 import pl.kamilszymanski707.eshopapi.services.discount.data.repository.CouponRepository
 import pl.kamilszymanski707.eshopapi.services.discount.event.CouponAmountUpdatedEvent
-import pl.kamilszymanski707.eshopapi.services.discount.exception.ResourceFoundException
-import pl.kamilszymanski707.eshopapi.services.discount.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.discount.resolver.CouponOutput
 
 @Service
@@ -53,10 +53,10 @@ internal class CouponMutationService(
         if (products == null || products.isEmpty() || products.size > 1)
             throw ResourceNotFoundException("Product with id: $productId does not exists.")
 
-        var coupon = Coupon(couponId, description, products[0].id, amount)
+        var coupon = Coupon.createInstance(couponId, description, products[0].id, amount)
         coupon = couponRepository.save(coupon)
 
         applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(this, coupon))
-        return CouponOutput(coupon.id!!, coupon.description, coupon.productId, coupon.amount)
+        return CouponOutput(coupon.id!!, coupon.description!!, coupon.productId!!, coupon.amount!!)
     }
 }

@@ -6,13 +6,13 @@ import org.springframework.data.redis.core.index.Indexed
 import java.math.BigDecimal
 
 @RedisHash("shopping_cart")
-open class ShoppingCart {
+class ShoppingCart {
 
     @field:Id
     @field:Indexed
-    open var userId: String? = null
+    var userId: String? = null
 
-    open var items: List<ShoppingCartItem> = ArrayList()
+    var items: List<ShoppingCartItem> = ArrayList()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -48,12 +48,12 @@ open class ShoppingCart {
     }
 }
 
-open class ShoppingCartItem {
+class ShoppingCartItem {
 
-    open var productId: String? = null
-    open var quantity: Int? = null
-    open var price: BigDecimal? = null
-    open var productName: String? = null
+    var productId: String? = null
+    var quantity: Int? = null
+    var price: BigDecimal? = null
+    var productName: String? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

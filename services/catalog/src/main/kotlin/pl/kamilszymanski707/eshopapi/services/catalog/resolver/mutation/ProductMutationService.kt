@@ -2,11 +2,11 @@ package pl.kamilszymanski707.eshopapi.services.catalog.resolver.mutation
 
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceFoundException
+import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.data.domain.Product
 import pl.kamilszymanski707.eshopapi.services.catalog.data.repository.ProductRepository
 import pl.kamilszymanski707.eshopapi.services.catalog.event.ProductPriceUpdatedEvent
-import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceFoundException
-import pl.kamilszymanski707.eshopapi.services.catalog.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.resolver.ProductOutput
 
 @Service
@@ -20,9 +20,9 @@ internal class ProductMutationService(
         if (optionalProduct.isPresent)
             throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
-        var product = Product(null, input.name, input.category, input.price)
+        var product = Product.createInstance(null, input.name, input.category, input.price)
         product = productRepository.save(product)
-        return ProductOutput(product.id!!, product.name, product.category, input.price)
+        return ProductOutput(product.id!!, product.name!!, product.category!!, input.price)
     }
 
     fun updateProduct(input: ProductUpdateInput): ProductOutput {
@@ -34,11 +34,11 @@ internal class ProductMutationService(
         if (optionalProduct.isPresent && optionalProduct.get().name != input.name)
             throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
-        var product = Product(input.id, input.name, input.category, input.price)
+        var product = Product.createInstance(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)
 
         applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(this, product))
-        return ProductOutput(product.id!!, product.name, product.category, input.price)
+        return ProductOutput(product.id!!, product.name!!, product.category!!, input.price)
     }
 
     fun deleteProduct(id: String): Boolean {

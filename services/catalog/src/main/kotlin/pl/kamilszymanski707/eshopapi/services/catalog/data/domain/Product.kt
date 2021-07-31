@@ -8,23 +8,63 @@ import pl.kamilszymanski707.eshopapi.services.catalog.data.QueryableProduct
 import java.math.BigDecimal
 
 @Document("products")
-data class Product(
+class Product : QueryableProduct {
 
-    @Id
-    @Indexed(unique = true)
-    val id: String?,
+    @field:Id
+    @field:Indexed(unique = true)
+    override var id: String? = null
 
-    @Field(name = "name")
-    @Indexed(unique = true)
-    val name: String,
+    @field:Field(name = "name")
+    @field:Indexed(unique = true)
+    override var name: String? = null
 
-    @Indexed
-    @Field(name = "category")
-    val category: ProductCategory,
+    @field:Indexed
+    @field:Field(name = "category")
+    override var category: ProductCategory? = null
 
-    @Field(name = "price")
-    val price: BigDecimal,
-) : QueryableProduct
+    @field:Field(name = "price")
+    var price: BigDecimal? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Product
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (category != other.category) return false
+        if (price != other.price) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (name?.hashCode() ?: 0)
+        result = 31 * result + (category?.hashCode() ?: 0)
+        result = 31 * result + (price?.hashCode() ?: 0)
+        return result
+    }
+
+    companion object {
+
+        fun createInstance(
+            id: String?, name: String?,
+            category: ProductCategory?,
+            price: BigDecimal?,
+        ): Product {
+
+            val result = Product()
+            result.id = id
+            result.name = name
+            result.category = category
+            result.price = price
+
+            return result
+        }
+    }
+}
 
 enum class ProductCategory {
     ELECTRONICS,

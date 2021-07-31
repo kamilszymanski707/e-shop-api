@@ -10,5 +10,5 @@ internal class ProductQueryService(
 ) {
     fun getProductsByQuery(input: ProductQueryInput?): List<ProductOutput> =
         productDao.findByQuery(input)
-            .map { ProductOutput(it.id!!, it.name, it.category, it.price) }
+            .map { ProductOutput(it.id!!, it.name!!, it.category!!, it.price!!) }
 }

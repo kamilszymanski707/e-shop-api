@@ -1,29 +1,41 @@
 package pl.kamilszymanski707.eshopapi.services.basket.listener
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.data.domain.Example
 import org.springframework.stereotype.Component
-import pl.kamilszymanski707.eshopapi.services.basket.config.RabbitMqConfigConstants.Companion.productPriceUpdatedQueue
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_PRICE_UPDATED_QUEUE
+import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
+import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
 import pl.kamilszymanski707.eshopapi.services.basket.data.repository.ShoppingCartRepository
 import java.math.BigDecimal
 
 @Component
-@RabbitListener(queues = [productPriceUpdatedQueue])
+@RabbitListener(queues = [PRODUCT_PRICE_UPDATED_QUEUE])
 internal class UpdateProductPriceListener(
     private val shoppingCartRepository: ShoppingCartRepository,
 ) {
 
-    private val logger: Logger = LoggerFactory.getLogger(UpdateProductPriceListener::class.java)
     private val mapper = jacksonObjectMapper()
 
     @RabbitHandler(isDefault = true)
     fun handle(bytea: ByteArray) {
         val value = mapper.readValue(bytea, Product::class.java)
 
-        logger.info("Message received {}", value.toString())
+        LOGGER.info("Message received {}", value.toString())
+
+        val example = Example.of(ShoppingCart.createInstance(null,
+            listOf(ShoppingCartItem.createInstance(value.id, null, null, null))))
+
+        val all = shoppingCartRepository.findAll(example)
+
+        all.forEach { handleUpdate(it, value) }
+    }
+
+    private fun handleUpdate(cart: ShoppingCart, product: Product) {
+
     }
 }
 

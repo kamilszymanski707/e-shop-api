@@ -11,5 +11,5 @@ internal class CouponQueryService(
 
     fun getCouponsByQuery(input: CouponQueryInput?): List<CouponOutput> =
         couponDao.findByQuery(input)
-            .map { CouponOutput(it.id!!, it.description, it.productId, it.amount) }
+            .map { CouponOutput(it.id!!, it.description!!, it.productId!!, it.amount!!) }
 }

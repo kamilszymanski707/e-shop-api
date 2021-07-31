@@ -19,6 +19,7 @@
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<graphql-spring-boot.version>11.1.0</graphql-spring-boot.version>
 		<security-lib.version>0.0.1-SNAPSHOT</security-lib.version>
+		<utils-lib.version>0.0.1-SNAPSHOT</utils-lib.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -54,6 +55,12 @@
 			<groupId>pl.kamilszymanski707.eshopapi.lib</groupId>
 			<artifactId>security-lib</artifactId>
 			<version>${security-lib.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>pl.kamilszymanski707.eshopapi.lib</groupId>
+			<artifactId>utils-lib</artifactId>
+			<version>${utils-lib.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
