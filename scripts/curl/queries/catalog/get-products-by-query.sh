@@ -1,33 +1,35 @@
 #INPUT:
-#id
-#name
-#category
+#id       - OPTIONAL
+#name     - OPTIONAL
+#category - OPTIONAL
+#price    - OPTIONAL
 
 #OUTPUT:
-#id
-#name
-#category
-#price
+#id       - OPTIONAL
+#name     - OPTIONAL
+#category - OPTIONAL
+#price    - OPTIONAL
 
-#EXAMPLE
-#sh get-products-by-query.sh 'id, name, category, price' 'id: \"61046a9037573c25beaf8ad4\", category: AUTOMOTIVE, name: \"Audi Q3\"'
+#EXAMPLE:
+#SCRIPT INPUT: $1 - INPUT - OPTIONAL, $2 - OUTPUT - OPTIONAL
+#sh get-products-by-query.sh '<INPUT>' '<OUTPUT>'
 
 query='{ "query": "query { getProductsByQuery'
 
 #INPUT - OPTIONAL
-if [ -n "$2" ]
+if [ -n "$1" ]
   then
-    query+='(input: {'"$2"'}) { '
+    query+='(input: {"'$1'"}) { '
   else
     query+=' { '
 fi;
 
 #OUTPUT - OPTIONAL
-if [ -n "$1" ]
+if [ -n "$2" ]
   then
-    query+=''"$1"' } '
+    query+='"'$2'" } '
   else
-    query+=' id, name, category, price } '
+    query+=' id, name, category, price } '  #SET DEFAULT VALUE
 fi;
 
 query+=' }" '
