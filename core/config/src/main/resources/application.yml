@@ -1,0 +1,20 @@
+base-local-host: 127.0.0.1
+
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/kamilszymanski707/git-config.git
+          search-paths:
+            - 'e-shop-api'
+            - 'e-shop-api/{application}'
+          default-label: main
+
+eureka:
+  client:
+    service-url:
+      default-zone: ${base-local-url}:8761/eureka/
