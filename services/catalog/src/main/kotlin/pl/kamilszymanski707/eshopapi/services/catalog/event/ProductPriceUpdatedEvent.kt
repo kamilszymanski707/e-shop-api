@@ -6,12 +6,17 @@ import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_PRICE_UPDATED_QUEUE
-import pl.kamilszymanski707.eshopapi.services.catalog.data.domain.Product
+import java.math.BigDecimal
 
 class ProductPriceUpdatedEvent(
     source: Any,
-    val product: Product,
+    val productPriceUpdated: ProductPriceUpdated,
 ) : ApplicationEvent(source)
+
+data class ProductPriceUpdated(
+    val id: String,
+    val price: BigDecimal,
+)
 
 @Component
 internal class ProductPriceUpdatedEventListener(
@@ -23,8 +28,8 @@ internal class ProductPriceUpdatedEventListener(
     override fun onApplicationEvent(
         event: ProductPriceUpdatedEvent,
     ) {
-        val product = event.product
-        val bytea = mapper.writeValueAsBytes(product)
+        val productPriceUpdated = event.productPriceUpdated
+        val bytea = mapper.writeValueAsBytes(productPriceUpdated)
 
         rabbitTemplate.convertAndSend(PRODUCT_PRICE_UPDATED_QUEUE, bytea)
     }

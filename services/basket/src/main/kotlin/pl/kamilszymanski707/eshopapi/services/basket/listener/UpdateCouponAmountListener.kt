@@ -21,7 +21,7 @@ internal class UpdateCouponAmountListener(
 
     @RabbitHandler(isDefault = true)
     fun handle(bytea: ByteArray) {
-        val value = mapper.readValue(bytea, Coupon::class.java)
+        val value = mapper.readValue(bytea, CouponAmountUpdated::class.java)
 
         LOGGER.info("Message received {}", value.toString())
 
@@ -33,14 +33,16 @@ internal class UpdateCouponAmountListener(
         all.forEach { handleUpdate(it, value) }
     }
 
-    private fun handleUpdate(cart: ShoppingCart, coupon: Coupon) {
-
+    private fun handleUpdate(
+        cart: ShoppingCart,
+        couponAmountUpdated: CouponAmountUpdated,
+    ) {
+        LOGGER.info("Cart {}", cart.toString())
+        LOGGER.info("Coupon Amount Updated {}", couponAmountUpdated.toString())
     }
 }
 
-internal data class Coupon(
-    val id: Int,
-    val description: String,
+internal data class CouponAmountUpdated(
     val productId: String,
     val amount: Int,
 )

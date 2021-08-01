@@ -7,7 +7,9 @@ import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundExce
 import pl.kamilszymanski707.eshopapi.services.discount.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.services.discount.data.domain.Coupon
 import pl.kamilszymanski707.eshopapi.services.discount.data.repository.CouponRepository
+import pl.kamilszymanski707.eshopapi.services.discount.event.CouponAmountUpdated
 import pl.kamilszymanski707.eshopapi.services.discount.event.CouponAmountUpdatedEvent
+import pl.kamilszymanski707.eshopapi.services.discount.event.CouponRemovedEvent
 import pl.kamilszymanski707.eshopapi.services.discount.resolver.CouponOutput
 
 @Service
@@ -32,12 +34,16 @@ internal class CouponMutationService(
         return saveOrUpdate(coupon.id, input.productId, input.description, input.amount)
     }
 
-    fun deleteCoupon(id: Int): Boolean {
-        val coupon = couponRepository.findById(id)
-            .orElseThrow { ResourceNotFoundException("Product with id: $id not found.") }
+    fun deleteCoupon(productId: String): Boolean {
+        val coupon = couponRepository.findByProductId(productId)
+            .orElseThrow { ResourceNotFoundException("Coupon for product with id: $productId does not exists.") }
 
         couponRepository.delete(coupon)
-        return !couponRepository.existsById(id)
+
+        applicationEventPublisher.publishEvent(
+            CouponRemovedEvent(this, productId))
+
+        return !couponRepository.existsById(coupon.id!!)
     }
 
     private fun saveOrUpdate(
@@ -56,7 +62,10 @@ internal class CouponMutationService(
         var coupon = Coupon.createInstance(couponId, description, products[0].id, amount)
         coupon = couponRepository.save(coupon)
 
-        applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(this, coupon))
+        if (couponId == null)
+            applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(
+                this, CouponAmountUpdated(coupon.productId!!, coupon.amount!!)))
+
         return CouponOutput(coupon.id!!, coupon.description!!, coupon.productId!!, coupon.amount!!)
     }
 }

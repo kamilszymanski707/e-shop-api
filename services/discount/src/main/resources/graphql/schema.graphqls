@@ -5,7 +5,7 @@ type Query {
 type Mutation {
     createCoupon(input: CouponCreateInput!): CouponOutput!
     updateCoupon(input: CouponUpdateInput!): CouponOutput!
-    deleteCoupon(id: Int!): Boolean!
+    deleteCoupon(productId: String!): Boolean!
 }
 
 schema {

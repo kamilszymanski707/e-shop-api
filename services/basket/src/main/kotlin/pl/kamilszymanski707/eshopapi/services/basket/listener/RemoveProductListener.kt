@@ -6,44 +6,37 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.data.domain.Example
 import org.springframework.stereotype.Component
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_PRICE_UPDATED_QUEUE
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_REMOVED_QUEUE
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
 import pl.kamilszymanski707.eshopapi.services.basket.data.repository.ShoppingCartRepository
-import java.math.BigDecimal
 
 @Component
-@RabbitListener(queues = [PRODUCT_PRICE_UPDATED_QUEUE])
-internal class UpdateProductPriceListener(
+@RabbitListener(queues = [PRODUCT_REMOVED_QUEUE])
+internal class RemoveProductListener(
     private val shoppingCartRepository: ShoppingCartRepository,
 ) {
-
     private val mapper = jacksonObjectMapper()
 
     @RabbitHandler(isDefault = true)
     fun handle(bytea: ByteArray) {
-        val value = mapper.readValue(bytea, ProductPriceUpdated::class.java)
+        val value = mapper.readValue(bytea, String::class.java)
 
-        LOGGER.info("Message received {}", value.toString())
+        LOGGER.info("Message received {}", value)
 
         val example = Example.of(ShoppingCart.createInstance(null,
-            listOf(ShoppingCartItem.createInstance(value.id, null, null, null))))
+            listOf(ShoppingCartItem.createInstance(value, null, null, null))))
 
         val all = shoppingCartRepository.findAll(example)
 
-        all.forEach { handleUpdate(it, value) }
+        all.forEach { handleRemove(it, value) }
     }
 
-    private fun handleUpdate(
+    private fun handleRemove(
         cart: ShoppingCart,
-        productPriceUpdated: ProductPriceUpdated,
+        productId: String,
     ) {
         LOGGER.info("Cart {}", cart.toString())
-        LOGGER.info("Product Price Updated {}", productPriceUpdated.toString())
+        LOGGER.info("Product ID {}", productId)
     }
 }
-
-internal data class ProductPriceUpdated(
-    val id: String,
-    val price: BigDecimal,
-)

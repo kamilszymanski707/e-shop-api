@@ -20,6 +20,6 @@ internal class DiscountMutationResolver(
     fun updateCoupon(@Valid input: CouponUpdateInput): CouponOutput =
         couponMutationService.updateCoupon(input)
 
-    fun deleteCoupon(id: Int): Boolean =
-        couponMutationService.deleteCoupon(id)
+    fun deleteCoupon(productId: String): Boolean =
+        couponMutationService.deleteCoupon(productId)
 }

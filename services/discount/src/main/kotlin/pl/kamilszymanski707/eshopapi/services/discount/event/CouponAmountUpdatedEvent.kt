@@ -6,12 +6,16 @@ import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.COUPON_AMOUNT_UPDATED_QUEUE
-import pl.kamilszymanski707.eshopapi.services.discount.data.domain.Coupon
 
 class CouponAmountUpdatedEvent(
     source: Any,
-    val coupon: Coupon,
+    val couponAmountUpdated: CouponAmountUpdated,
 ) : ApplicationEvent(source)
+
+data class CouponAmountUpdated(
+    val productId: String,
+    val amount: Int,
+)
 
 @Component
 internal class CouponAmountUpdatedEventListener(
@@ -23,8 +27,8 @@ internal class CouponAmountUpdatedEventListener(
     override fun onApplicationEvent(
         event: CouponAmountUpdatedEvent,
     ) {
-        val coupon = event.coupon
-        val bytea = mapper.writeValueAsBytes(coupon)
+        val couponAmountUpdated = event.couponAmountUpdated
+        val bytea = mapper.writeValueAsBytes(couponAmountUpdated)
 
         rabbitTemplate.convertAndSend(COUPON_AMOUNT_UPDATED_QUEUE, bytea)
     }

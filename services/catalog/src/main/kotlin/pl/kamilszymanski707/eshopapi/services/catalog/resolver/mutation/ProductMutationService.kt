@@ -6,7 +6,9 @@ import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceFoundExcepti
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
 import pl.kamilszymanski707.eshopapi.services.catalog.data.domain.Product
 import pl.kamilszymanski707.eshopapi.services.catalog.data.repository.ProductRepository
+import pl.kamilszymanski707.eshopapi.services.catalog.event.ProductPriceUpdated
 import pl.kamilszymanski707.eshopapi.services.catalog.event.ProductPriceUpdatedEvent
+import pl.kamilszymanski707.eshopapi.services.catalog.event.ProductRemovedEvent
 import pl.kamilszymanski707.eshopapi.services.catalog.resolver.ProductOutput
 
 @Service
@@ -22,6 +24,7 @@ internal class ProductMutationService(
 
         var product = Product.createInstance(null, input.name, input.category, input.price)
         product = productRepository.save(product)
+
         return ProductOutput(product.id!!, product.name!!, product.category!!, input.price)
     }
 
@@ -37,7 +40,9 @@ internal class ProductMutationService(
         var product = Product.createInstance(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)
 
-        applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(this, product))
+        applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(
+            this, ProductPriceUpdated(product.id!!, product.price!!)))
+
         return ProductOutput(product.id!!, product.name!!, product.category!!, input.price)
     }
 
@@ -46,6 +51,9 @@ internal class ProductMutationService(
             .orElseThrow { ResourceNotFoundException("Product with id: $id not found.") }
 
         productRepository.delete(product)
+
+        applicationEventPublisher.publishEvent(ProductRemovedEvent(this, id))
+
         return !productRepository.existsById(id)
     }
 }
