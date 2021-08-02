@@ -37,11 +37,14 @@ internal class ProductMutationService(
         if (optionalProduct.isPresent && optionalProduct.get().name != input.name)
             throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
+        val existingProduct = optionalProduct.get()
+
         var product = Product.createInstance(input.id, input.name, input.category, input.price)
         product = productRepository.save(product)
 
-        applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(
-            this, ProductPriceUpdated(product.id!!, product.price!!)))
+        if (existingProduct.price != input.price)
+            applicationEventPublisher.publishEvent(ProductPriceUpdatedEvent(
+                this, ProductPriceUpdated(product.id!!, product.price!!)))
 
         return ProductOutput(product.id!!, product.name!!, product.category!!, input.price)
     }
@@ -52,8 +55,11 @@ internal class ProductMutationService(
 
         productRepository.delete(product)
 
-        applicationEventPublisher.publishEvent(ProductRemovedEvent(this, id))
+        val isRemoved = !productRepository.existsById(id)
 
-        return !productRepository.existsById(id)
+        if (isRemoved)
+            applicationEventPublisher.publishEvent(ProductRemovedEvent(this, id))
+
+        return isRemoved
     }
 }
