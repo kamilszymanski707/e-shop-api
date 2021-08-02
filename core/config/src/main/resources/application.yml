@@ -1,8 +1,5 @@
-base-local-host: 127.0.0.1
-base-local-url: http://${base-local-host}
-
 server:
-  port: 8888
+  port: ${PORT:8888}
 
 spring:
   cloud:
@@ -17,5 +14,7 @@ spring:
 
 eureka:
   client:
-    service-url:
-      default-zone: ${base-local-url}:8761/eureka/
+    fetch-registry: false
+    register-with-eureka: false
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://127.0.0.1:8761/eureka/}
