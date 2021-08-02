@@ -13,11 +13,11 @@
 #SCRIPT INPUT: $1 - INPUT - REQUIRED, $2 - JWT - REQUIRED, $3 - OUTPUT - OPTIONAL
 #sh create-product.sh '<INPUT>' '<JWT>' '<OUTPUT>'
 
-query='{ "query": "mutation { createProduct(input: {'"$1"'}) { '
+query='{ "query": "mutation { createProduct(input: {'$1'}) { '
 
 if [ -n "$3" ]
   then
-    query+=''"$3"' } '
+    query+=''$3' } '
   else
     query+=' id, name, category, price } '  #SET DEFAULT VALUE
 fi;

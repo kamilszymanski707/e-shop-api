@@ -45,6 +45,17 @@ internal class ShoppingCartMutationService(
         return ShoppingCartOutput(itemsList)
     }
 
+    fun deleteBasket(): Boolean {
+        val principalId = getPrincipalId()
+
+        val basket = shoppingCartRepository.findById(principalId)
+            .orElseThrow { ResourceNotFoundException("Basket for user with id: $principalId does not exists.") }
+
+        shoppingCartRepository.delete(basket)
+
+        return !shoppingCartRepository.existsById(principalId)
+    }
+
     private fun updatedItems(items: List<ShoppingCartItemUpdateInput>): List<ShoppingCartItem> {
         val shoppingCartItemList = ArrayList<ShoppingCartItem>()
 
@@ -65,17 +76,6 @@ internal class ShoppingCartMutationService(
         return shoppingCartItemList
     }
 
-    fun deleteBasket(): Boolean {
-        val principalId = getPrincipalId()
-
-        val basket = shoppingCartRepository.findById(principalId)
-            .orElseThrow { ResourceNotFoundException("Basket for user with id: $principalId does not exists.") }
-
-        shoppingCartRepository.delete(basket)
-
-        return !shoppingCartRepository.existsById(principalId)
-    }
-
-    fun getPrincipalId(): String =
+    private fun getPrincipalId(): String =
         SecurityContextHolder.getContext().authentication.name
 }

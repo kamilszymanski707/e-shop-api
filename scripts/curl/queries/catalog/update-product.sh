@@ -14,12 +14,12 @@
 #SCRIPT INPUT: $1 - INPUT - REQUIRED, $2 - JWT - REQUIRED, $3 - OUTPUT - OPTIONAL
 #sh update-product.sh '<INPUT>' '<JWT>' '<OUTPUT>'
 
-query='{ "query": "mutation { updateProduct(input: {'"$1"'}) { '
+query='{ "query": "mutation { updateProduct(input: {'$1'}) { '
 
 #OUTPUT - OPTIONAL
 if [ -n "$3" ]
   then
-    query+=''"$3"' } '
+    query+=''$3' } '
   else
     query+=' id, name, category, price } '  #SET DEFAULT VALUE
 fi;

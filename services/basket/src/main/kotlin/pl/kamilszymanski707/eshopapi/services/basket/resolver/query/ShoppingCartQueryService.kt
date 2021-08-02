@@ -37,6 +37,6 @@ internal class ShoppingCartQueryService(
         return ShoppingCartOutput(items)
     }
 
-    fun getPrincipalId(): String =
+    private fun getPrincipalId(): String =
         SecurityContextHolder.getContext().authentication.name
 }

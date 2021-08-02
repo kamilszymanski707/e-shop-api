@@ -2,16 +2,13 @@
 #id       - REQUIRED
 
 #OUTPUT:
-#id       - OPTIONAL
-#name     - OPTIONAL
-#category - OPTIONAL
-#price    - OPTIONAL
+#is removed - BOOLEAN - TRUE
 
 #EXAMPLE:
 #SCRIPT INPUT: $1 - INPUT - REQUIRED, $2 - JWT - REQUIRED
 #sh delete-product.sh '<INPUT>' '<JWT>'
 
-query='{ "query": "mutation { deleteProduct(id: '"$1"') }" }'
+query='{ "query": "mutation { deleteProduct(id: '$1') }" }'
 
 echo "$query"
 

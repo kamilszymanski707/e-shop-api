@@ -19,7 +19,7 @@ query='{ "query": "query { getProductsByQuery'
 #INPUT - OPTIONAL
 if [ -n "$1" ]
   then
-    query+='(input: {"'$1'"}) { '
+    query+='(input: {'$1'}) { '
   else
     query+=' { '
 fi;
@@ -27,7 +27,7 @@ fi;
 #OUTPUT - OPTIONAL
 if [ -n "$2" ]
   then
-    query+='"'$2'" } '
+    query+=''$2' } '
   else
     query+=' id, name, category, price } '  #SET DEFAULT VALUE
 fi;
