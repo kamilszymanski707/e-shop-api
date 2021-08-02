@@ -31,7 +31,13 @@ internal class CouponMutationService(
         val coupon = couponRepository.findByProductId(input.productId)
             .orElseThrow { ResourceNotFoundException("Coupon for product with id: ${input.productId} does not exists.") }
 
-        return saveOrUpdate(coupon.id, input.productId, input.description, input.amount)
+        val result = saveOrUpdate(coupon.id, input.productId, input.description, input.amount)
+
+        if (coupon.amount != input.amount)
+            applicationEventPublisher.publishEvent(CouponAmountUpdatedEvent(
+                this, CouponAmountUpdated(result.productId, result.amount)))
+
+        return result
     }
 
     fun deleteCoupon(productId: String): Boolean {
