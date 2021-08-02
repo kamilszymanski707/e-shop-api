@@ -12,9 +12,11 @@ services:
       - "8761:8761"
   config:
     image: config:0.0.1-SNAPSHOT
+    restart: on-failure
     environment:
       - JAVA_OPTS=
         -DEUREKA_URI=http://eureka:8761/eureka/
+        -DGIT_ROOT_SEARCH_PATH=e-shop-api/docker
     build:
       context: core/config
       dockerfile: Dockerfile
@@ -22,6 +24,19 @@ services:
       - "8888:8888"
     depends_on:
       - eureka
+  gateway:
+    image: gateway:0.0.1-SNAPSHOT
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DCONFIG_URI=http://config:8888
+    build:
+      context: core/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    depends_on:
+      - config
   rabbitmq:
     image: rabbitmq:management-alpine
     environment:

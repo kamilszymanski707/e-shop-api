@@ -1,3 +1,6 @@
+git-root-search-path: '${GIT_ROOT_SEARCH_PATH:e-shop-api/local}'
+git-application-search-path: '${git-root-search-path}/{application}'
+
 server:
   port: ${PORT:8888}
 
@@ -8,8 +11,8 @@ spring:
         git:
           uri: https://github.com/kamilszymanski707/git-config.git
           search-paths:
-            - 'e-shop-api'
-            - 'e-shop-api/{application}'
+            - ${git-root-search-path}
+            - ${git-application-search-path}
           default-label: main
 
 eureka:
