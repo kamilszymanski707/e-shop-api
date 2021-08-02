@@ -9,7 +9,7 @@ import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Compan
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
 import java.net.URI
 
-open class GraphQLClient<QL_OBJECT>(
+internal open class GraphQLClient<QL_OBJECT>(
     private val clazz: Class<QL_OBJECT>,
     private val template: RestTemplate,
 ) {

@@ -3,22 +3,22 @@ package pl.kamilszymanski707.eshopapi.services.basket.resolver.mutation
 import org.springframework.context.annotation.Scope
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import pl.kamilszymanski707.eshopapi.lib.utilslib.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
-import pl.kamilszymanski707.eshopapi.services.basket.client.CatalogClient
-import pl.kamilszymanski707.eshopapi.services.basket.client.DiscountClient
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
 import pl.kamilszymanski707.eshopapi.services.basket.data.repository.ShoppingCartRepository
 import pl.kamilszymanski707.eshopapi.services.basket.resolver.ShoppingCartItemOutput
 import pl.kamilszymanski707.eshopapi.services.basket.resolver.ShoppingCartOutput
 import java.math.BigDecimal
+import java.util.function.BiFunction
 
 @Service
 @Scope("prototype")
 internal class ShoppingCartMutationService(
     private val shoppingCartRepository: ShoppingCartRepository,
     private val catalogClient: CatalogClient,
-    private val discountClient: DiscountClient,
+    private val computePrice: BiFunction<String, BigDecimal, BigDecimal>,
 ) {
 
     fun updateBasket(input: ShoppingCartUpdateInput): ShoppingCartOutput {
@@ -51,16 +51,9 @@ internal class ShoppingCartMutationService(
         items.forEach {
             val productId = it.productId
 
-            val productOutput = catalogClient.getProductsByQuery(productId, null, null)
-                ?: throw ResourceNotFoundException("Product with id: $productId does not exists.")
+            val searchedProduct = catalogClient.getProductById(productId)
 
-            val products = productOutput.data?.getProductsByQuery
-            if (products == null || products.isEmpty() || products.size > 1)
-                throw ResourceNotFoundException("Product with id: $productId does not exists.")
-
-            val searchedProduct = products[0]
-
-            val updatedPrice = updatedPrice(productId, searchedProduct.price)
+            val updatedPrice = computePrice.apply(productId, searchedProduct.price)
 
             val shoppingCartItem = ShoppingCartItem.createInstance(
                 productId, it.quantity,
@@ -72,22 +65,6 @@ internal class ShoppingCartMutationService(
         return shoppingCartItemList
     }
 
-    private fun updatedPrice(productId: String, price: BigDecimal): BigDecimal {
-        val discountOutput = discountClient.getCouponsByQuery(
-            null, null, productId)
-
-        if (discountOutput != null) {
-            val coupons = discountOutput.data?.getCouponsByQuery
-            if (coupons?.size == 0)
-                return price
-
-            val coupon = coupons!![0]
-            return price.multiply(BigDecimal(coupon.amount.toDouble() / 100))
-        }
-
-        return price
-    }
-
     fun deleteBasket(): Boolean {
         val principalId = getPrincipalId()
 
@@ -95,6 +72,7 @@ internal class ShoppingCartMutationService(
             .orElseThrow { ResourceNotFoundException("Basket for user with id: $principalId does not exists.") }
 
         shoppingCartRepository.delete(basket)
+
         return !shoppingCartRepository.existsById(principalId)
     }
 

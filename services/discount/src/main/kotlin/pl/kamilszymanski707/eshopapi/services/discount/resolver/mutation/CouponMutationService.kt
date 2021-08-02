@@ -2,9 +2,9 @@ package pl.kamilszymanski707.eshopapi.services.discount.resolver.mutation
 
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import pl.kamilszymanski707.eshopapi.lib.utilslib.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceFoundException
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
-import pl.kamilszymanski707.eshopapi.services.discount.client.CatalogClient
 import pl.kamilszymanski707.eshopapi.services.discount.data.domain.Coupon
 import pl.kamilszymanski707.eshopapi.services.discount.data.repository.CouponRepository
 import pl.kamilszymanski707.eshopapi.services.discount.event.CouponAmountUpdated

@@ -11,11 +11,13 @@ import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
 import pl.kamilszymanski707.eshopapi.services.basket.data.repository.ShoppingCartRepository
 import java.math.BigDecimal
+import java.util.function.BiFunction
 
 @Component
 @RabbitListener(queues = [PRODUCT_PRICE_UPDATED_QUEUE])
 internal class UpdateProductPriceListener(
     private val shoppingCartRepository: ShoppingCartRepository,
+    private val computePrice: BiFunction<String, BigDecimal, BigDecimal>,
 ) {
 
     private val mapper = jacksonObjectMapper()
@@ -40,6 +42,22 @@ internal class UpdateProductPriceListener(
     ) {
         LOGGER.info("Cart {}", cart.toString())
         LOGGER.info("Product Price Updated {}", productPriceUpdated.toString())
+
+        val items = arrayListOf<ShoppingCartItem>()
+
+        for (item in cart.items) {
+            if (item.productId == productPriceUpdated.id) {
+                item.price = computePrice.apply(item.productId!!, productPriceUpdated.price)
+            }
+
+            items.add(item)
+        }
+
+        cart.items = items
+
+        shoppingCartRepository.save(cart)
+
+        LOGGER.info("Shopping cart updated {}", cart.toString())
     }
 }
 

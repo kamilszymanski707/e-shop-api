@@ -1,8 +1,6 @@
-package pl.kamilszymanski707.eshopapi.services.basket.client
+package pl.kamilszymanski707.eshopapi.lib.utilslib.client
 
-import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import pl.kamilszymanski707.eshopapi.lib.utilslib.client.GraphQLClient
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.ClientConstant.Companion.DISCOUNT_SERVICE_URI
 
 interface DiscountClient {
@@ -12,9 +10,14 @@ interface DiscountClient {
         description: String?,
         productId: String?,
     ): CouponOutput?
+
+    companion object {
+
+        fun discountClient(restTemplate: RestTemplate): DiscountClient =
+            DiscountClientImpl(restTemplate)
+    }
 }
 
-@Component
 internal class DiscountClientImpl(
     restTemplate: RestTemplate,
 ) : GraphQLClient<CouponOutput>(CouponOutput::class.java, restTemplate),

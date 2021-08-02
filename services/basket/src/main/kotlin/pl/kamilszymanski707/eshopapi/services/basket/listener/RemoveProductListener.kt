@@ -38,5 +38,17 @@ internal class RemoveProductListener(
     ) {
         LOGGER.info("Cart {}", cart.toString())
         LOGGER.info("Product ID {}", productId)
+
+        val items = arrayListOf<ShoppingCartItem>()
+
+        for (item in cart.items)
+            if (productId != item.productId)
+                items.add(item)
+
+        cart.items = items
+
+        shoppingCartRepository.save(cart)
+
+        LOGGER.info("Shopping cart updated {}", cart.toString())
     }
 }
