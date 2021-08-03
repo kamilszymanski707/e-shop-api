@@ -1,19 +1,21 @@
 #INPUT:
-#1 - username
-#2 - password
+#client secret - REQUIRED
+#username - REQUIRED
+#password - REQUIRED
 
 #OUTPUT:
 #JWT
 
 #EXAMPLE:
-#sh keycloak-authorization.sh user user
+#SCRIPT INPUT: $1 - SECRET - REQUIRED, $2 - USERNAME - REQUIRED, $3 - PASSWORD - REQUIRED
+#sh keycloak-authorization.sh '<SECRET>' '<USERNAME>' '<PASSWORD>'
 
 curl --request POST \
   --url http://localhost:8080/auth/realms/e-shop/protocol/openid-connect/token \
   --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data client_secret=1e8b086c-1399-47c0-bd6b-10f0dc13cee0 \
+  --data client_secret="$1" \
   --data grant_type=password \
-  --data username="$1" \
-  --data password="$2" \
+  --data username="$2" \
+  --data password="$3" \
   --data client_id=e-shop \
   --data scope=openid
