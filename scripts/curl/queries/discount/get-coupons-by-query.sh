@@ -39,4 +39,4 @@ echo "$query"
 curl -X POST \
 -H "Content-Type: application/json" \
 -d "$query" \
--k https://127.0.0.1/e-shop/api/v1/discount/graphql
+http://127.0.0.1/e-shop/api/v1/discount/graphql

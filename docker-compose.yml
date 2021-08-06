@@ -1,15 +1,67 @@
 version: "3.9"
 
 services:
+  keycloak:
+    image: wizzn/keycloak:12
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/tmp/realm-export.json -Dkeycloak.profile.feature.upload_scripts=enabled
+    volumes:
+      - ./tmp/realm-export.json:/tmp/realm-export.json
+    ports:
+      - "8080:8080"
+    networks:
+      - e-shop
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=prod
+      - RABBITMQ_DEFAULT_PASS=3kWr7WvWBpsJVztS
+    ports:
+      - "15672:15672"
+    expose:
+      - "5672"
+    networks:
+      - e-shop
+  mongo_catalog:
+    image: mongo:5.0.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=prod
+      - MONGO_INITDB_ROOT_PASSWORD=DgcePv9JrjcmNUHY
+      - MONGO_INITDB_DATABASE=catalog_db
+    ports:
+      - "27017:27017"
+    networks:
+      - e-shop
+  postgres_discount:
+    image: postgres:13.3-alpine
+    environment:
+      - POSTGRES_USER=prod
+      - POSTGRES_PASSWORD=bjYZGWPWbe2DPrFr
+      - POSTGRES_DB=discount_db
+    ports:
+      - "5432:5432"
+    networks:
+      - e-shop
+  redis_basket:
+    image: redis:6.2.4-alpine
+    command: redis-server --requirepass LuBeSxG73CtAJhPD --appendonly yes
+    ports:
+      - "6379:6379"
+    networks:
+      - e-shop
   eureka:
     image: eureka:0.0.1-SNAPSHOT
-    environment:
-      - JAVA_OPTS=
     build:
       context: core/eureka
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
+    depends_on:
+      - keycloak
+    networks:
+      - e-shop
   config:
     image: config:0.0.1-SNAPSHOT
     restart: on-failure
@@ -24,6 +76,8 @@ services:
       - "8888:8888"
     depends_on:
       - eureka
+    networks:
+      - e-shop
   gateway:
     image: gateway:0.0.1-SNAPSHOT
     restart: on-failure
@@ -34,9 +88,11 @@ services:
       context: core/gateway
       dockerfile: Dockerfile
     ports:
-      - "443:443"
+      - "80:80"
     depends_on:
       - config
+    networks:
+      - e-shop
   catalog:
     image: catalog:0.0.1-SNAPSHOT
     restart: on-failure
@@ -46,10 +102,10 @@ services:
     build:
       context: services/catalog
       dockerfile: Dockerfile
-    ports:
-      - "9001:9001"
     depends_on:
       - gateway
+    networks:
+      - e-shop
   discount:
     image: discount:0.0.1-SNAPSHOT
     restart: on-failure
@@ -59,10 +115,10 @@ services:
     build:
       context: services/discount
       dockerfile: Dockerfile
-    ports:
-      - "9002:9002"
     depends_on:
       - gateway
+    networks:
+      - e-shop
   basket:
     image: basket:0.0.1-SNAPSHOT
     restart: on-failure
@@ -72,36 +128,10 @@ services:
     build:
       context: services/basket
       dockerfile: Dockerfile
-    ports:
-      - "9003:9003"
     depends_on:
       - gateway
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=prod
-      - RABBITMQ_DEFAULT_PASS=3kWr7WvWBpsJVztS
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-  mongo_catalog:
-    image: mongo:5.0.0
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=prod
-      - MONGO_INITDB_ROOT_PASSWORD=DgcePv9JrjcmNUHY
-      - MONGO_INITDB_DATABASE=catalog_db
-    ports:
-      - "27017:27017"
-  postgres_discount:
-    image: postgres:13.3-alpine
-    environment:
-      - POSTGRES_USER=prod
-      - POSTGRES_PASSWORD=bjYZGWPWbe2DPrFr
-      - POSTGRES_DB=discount_db
-    ports:
-      - "5432:5432"
-  redis_basket:
-    image: redis:6.2.4-alpine
-    command: redis-server --requirepass LuBeSxG73CtAJhPD --appendonly yes
-    ports:
-      - "6379:6379"
+    networks:
+      - e-shop
+
+networks:
+  e-shop:

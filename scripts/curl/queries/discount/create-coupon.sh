@@ -31,4 +31,4 @@ curl -X POST \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer $2" \
 -d "$query" \
--k https://127.0.0.1/e-shop/api/v1/discount/graphql
+http://127.0.0.1/e-shop/api/v1/discount/graphql
