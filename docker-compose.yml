@@ -64,8 +64,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
-    depends_on:
-      - keycloak
     networks:
       - e-shop
   config:
@@ -99,6 +97,7 @@ services:
       - "80:80"
     depends_on:
       - config
+      - keycloak
     networks:
       - e-shop
   catalog:
@@ -113,6 +112,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - gateway
+      - mongo_catalog
+      - rabbitmq
     networks:
       - e-shop
   discount:
@@ -127,6 +128,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - gateway
+      - postgres_discount
+      - rabbitmq
     networks:
       - e-shop
   basket:
@@ -141,6 +144,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - gateway
+      - redis_basket
+      - rabbitmq
     networks:
       - e-shop
 
