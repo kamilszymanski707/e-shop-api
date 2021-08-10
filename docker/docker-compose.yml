@@ -9,7 +9,7 @@ services:
       KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
       KEYCLOAK_IMPORT: $KEYCLOAK_IMPORT
     volumes:
-      - ../tmp/realm-export.json:/tmp/realm-export.json
+      - ./tmp/realm-export.json:/tmp/realm-export.json
     ports:
       - "8080:8080"
     networks:
@@ -93,10 +93,10 @@ services:
       XPACK_MONITORING_ENABLED: "true"
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-    networks:
-      - e-shop
     depends_on:
       - elasticsearch
+    networks:
+      - e-shop
   kibana:
     container_name: kibana
     image: kibana:${ELK_VERSION}
@@ -106,19 +106,25 @@ services:
       XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: "true"
     ports:
       - "5601:5601"
-    networks:
-      - e-shop
     depends_on:
       - elasticsearch
       - logstash
+    networks:
+      - e-shop
   eureka:
     container_name: eureka
     image: eureka:${EUREKA_VERSION}
+    environment:
+      - JAVA_OPTS=
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../core/eureka
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
+    depends_on:
+      - elasticsearch
+      - logstash
     networks:
       - e-shop
   config:
@@ -129,6 +135,7 @@ services:
       - JAVA_OPTS=
         -DEUREKA_URI=${EUREKA_URI}
         -DGIT_ROOT_SEARCH_PATH=${GIT_ROOT_SEARCH_PATH}
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../core/config
       dockerfile: Dockerfile
@@ -145,6 +152,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../core/gateway
       dockerfile: Dockerfile
@@ -153,8 +161,6 @@ services:
     depends_on:
       - config
       - keycloak
-      - elasticsearch
-      - logstash
     networks:
       - e-shop
   catalog:
@@ -164,6 +170,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../services/catalog
       dockerfile: Dockerfile
@@ -180,6 +187,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../services/discount
       dockerfile: Dockerfile
@@ -196,6 +204,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
+        -DLOGSTASH_HOST=logstash
     build:
       context: ../services/basket
       dockerfile: Dockerfile

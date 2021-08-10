@@ -1,0 +1,9 @@
+server:
+  port: ${PORT:8888}
+
+spring:
+  application:
+    name: config
+
+logstash.host: ${LOGSTASH_HOST:127.0.0.1}
+logstash.port: ${LOGSTASH_PORT:5000}

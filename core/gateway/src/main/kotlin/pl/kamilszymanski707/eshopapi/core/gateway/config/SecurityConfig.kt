@@ -1,7 +1,5 @@
 package pl.kamilszymanski707.eshopapi.core.gateway.config
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod.POST
@@ -15,14 +13,9 @@ internal class SecurityConfig {
     @Value("\${route-prefix}")
     private lateinit var routePrefix: String
 
-    private val logger: Logger = LoggerFactory.getLogger(javaClass)
-
     @Bean
-    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-
-        logger.info("ROUTE PREFIX: $routePrefix")
-
-        return http
+    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain =
+        http
             .csrf().disable()
             .authorizeExchange {
                 it
@@ -33,5 +26,4 @@ internal class SecurityConfig {
             }
             .oauth2Client().and()
             .build()
-    }
 }

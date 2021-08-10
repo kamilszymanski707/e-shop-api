@@ -1,9 +1,6 @@
 git-root-search-path: '${GIT_ROOT_SEARCH_PATH:e-shop-api/local}'
 git-application-search-path: '${git-root-search-path}/{application}'
 
-server:
-  port: ${PORT:8888}
-
 spring:
   cloud:
     config:

@@ -20,6 +20,7 @@
         <graphql-spring-boot.version>11.1.0</graphql-spring-boot.version>
         <security-lib.version>0.0.1-SNAPSHOT</security-lib.version>
         <utils-lib.version>0.0.1-SNAPSHOT</utils-lib.version>
+        <logstash.version>6.3</logstash.version>
     </properties>
     <dependencies>
         <dependency>
@@ -70,6 +71,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash.version}</version>
         </dependency>
 
         <dependency>
