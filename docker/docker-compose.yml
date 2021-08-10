@@ -1,0 +1,214 @@
+version: "3.9"
+
+services:
+  keycloak:
+    container_name: keycloak
+    image: wizzn/keycloak:${KEYCLOAK_VERSION}
+    environment:
+      KEYCLOAK_USER: $KEYCLOAK_USER
+      KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
+      KEYCLOAK_IMPORT: $KEYCLOAK_IMPORT
+    volumes:
+      - ../tmp/realm-export.json:/tmp/realm-export.json
+    ports:
+      - "8080:8080"
+    networks:
+      - e-shop
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:${RABBITMQ_VERSION}
+    environment:
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
+    ports:
+      - "15672:15672"
+    expose:
+      - "5672"
+    networks:
+      - e-shop
+  mongo_catalog:
+    container_name: mongo_catalog
+    image: mongo:${MONGO_VERSION}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
+    ports:
+      - "27017:27017"
+    networks:
+      - e-shop
+  postgres_discount:
+    container_name: postgres_discount
+    image: postgres:${POSTGRES_VERSION}
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    ports:
+      - "5432:5432"
+    networks:
+      - e-shop
+  redis_basket:
+    container_name: redis_basket
+    image: redis:${REDIS_VERSION}
+    command: redis-server --requirepass ${REDIS_PASS} --appendonly yes
+    ports:
+      - "6379:6379"
+    networks:
+      - e-shop
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:${ELK_VERSION}
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: $ELASTIC_PASSWORD
+      discovery.type: single-node
+      xpack.security.enabled: "true"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    healthcheck:
+      test: "wget -q -O - http://$ELASTIC_USER:$ELASTIC_PASSWORD@localhost:9200/_cat/health"
+      interval: 1s
+      timeout: 30s
+      retries: 300
+    networks:
+      - e-shop
+  logstash:
+    container_name: logstash
+    image: logstash:${ELK_VERSION}
+    ports:
+      - "5000:5000"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_USER: $ELASTIC_USER
+      ELASTIC_PASSWORD: $ELASTIC_PASSWORD
+      ELASTIC_URL: http://${ELASTIC_USER}:${ELASTIC_PASSWORD}@elasticsearch:9200
+      XPACK_MONITORING_ELASTICSEARCH_USERNAME: $ELASTIC_USER
+      XPACK_MONITORING_ELASTICSEARCH_PASSWORD: $ELASTIC_PASSWORD
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: "elasticsearch:9200"
+      XPACK_MONITORING_ENABLED: "true"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    networks:
+      - e-shop
+    depends_on:
+      - elasticsearch
+  kibana:
+    container_name: kibana
+    image: kibana:${ELK_VERSION}
+    environment:
+      ELASTICSEARCH_USERNAME: $ELASTIC_USER
+      ELASTICSEARCH_PASSWORD: $ELASTIC_PASSWORD
+      XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: "true"
+    ports:
+      - "5601:5601"
+    networks:
+      - e-shop
+    depends_on:
+      - elasticsearch
+      - logstash
+  eureka:
+    container_name: eureka
+    image: eureka:${EUREKA_VERSION}
+    build:
+      context: ../core/eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - e-shop
+  config:
+    container_name: config
+    image: config:${CONFIG_VERSION}
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_URI=${EUREKA_URI}
+        -DGIT_ROOT_SEARCH_PATH=${GIT_ROOT_SEARCH_PATH}
+    build:
+      context: ../core/config
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka
+    networks:
+      - e-shop
+  gateway:
+    container_name: gateway
+    image: gateway:${GATEWAY_VERSION}
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DCONFIG_URI=${CONFIG_URI}
+    build:
+      context: ../core/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - config
+      - keycloak
+      - elasticsearch
+      - logstash
+    networks:
+      - e-shop
+  catalog:
+    container_name: catalog
+    image: catalog:${CATALOG_VERSION}
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DCONFIG_URI=${CONFIG_URI}
+    build:
+      context: ../services/catalog
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway
+      - mongo_catalog
+      - rabbitmq
+    networks:
+      - e-shop
+  discount:
+    container_name: discount
+    image: discount:${DISCOUNT_VERSION}
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DCONFIG_URI=${CONFIG_URI}
+    build:
+      context: ../services/discount
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway
+      - postgres_discount
+      - rabbitmq
+    networks:
+      - e-shop
+  basket:
+    container_name: basket
+    image: basket:${BASKET_VERSION}
+    restart: on-failure
+    environment:
+      - JAVA_OPTS=
+        -DCONFIG_URI=${CONFIG_URI}
+    build:
+      context: ../services/basket
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway
+      - redis_basket
+      - rabbitmq
+    networks:
+      - e-shop
+
+networks:
+  e-shop:
+    name: e-shop
+
+volumes:
+  elasticsearch:
