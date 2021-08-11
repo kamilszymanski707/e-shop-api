@@ -20,6 +20,6 @@ internal class CatalogMutationResolver(
     fun updateProduct(@Valid input: ProductUpdateInput): ProductOutput =
         productMutationService.updateProduct(input)
 
-    fun deleteProduct(id: String) =
+    fun deleteProduct(id: String): Boolean =
         productMutationService.deleteProduct(id)
 }
