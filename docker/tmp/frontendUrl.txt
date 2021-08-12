@@ -1,0 +1,4 @@
+#IF YOU WANT TO RUN APPLICATION ON LOCALHOST CHANGE frontendUrl json property in realm-export.json file to "local"
+
+http://localhost:8080/auth  - "local"
+http://keycloak:8080/auth   - "docker"
