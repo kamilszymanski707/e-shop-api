@@ -4,6 +4,3 @@ server:
 spring:
   application:
     name: eureka
-
-logstash.host: ${LOGSTASH_HOST:127.0.0.1}
-logstash.port: ${LOGSTASH_PORT:5000}

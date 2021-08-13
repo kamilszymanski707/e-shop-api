@@ -116,7 +116,7 @@ services:
     image: eureka:${EUREKA_VERSION}
     environment:
       - JAVA_OPTS=
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../core/eureka
       dockerfile: Dockerfile
@@ -135,7 +135,7 @@ services:
       - JAVA_OPTS=
         -DEUREKA_URI=${EUREKA_URI}
         -DGIT_ROOT_SEARCH_PATH=${GIT_ROOT_SEARCH_PATH}
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../core/config
       dockerfile: Dockerfile
@@ -152,7 +152,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../core/gateway
       dockerfile: Dockerfile
@@ -170,7 +170,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../services/catalog
       dockerfile: Dockerfile
@@ -187,7 +187,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../services/discount
       dockerfile: Dockerfile
@@ -204,7 +204,7 @@ services:
     environment:
       - JAVA_OPTS=
         -DCONFIG_URI=${CONFIG_URI}
-        -DLOGSTASH_HOST=logstash
+        -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
       context: ../services/basket
       dockerfile: Dockerfile
