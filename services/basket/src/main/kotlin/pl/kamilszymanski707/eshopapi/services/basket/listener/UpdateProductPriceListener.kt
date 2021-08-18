@@ -39,7 +39,10 @@ internal class UpdateProductPriceListener(
         cart.items = cart.items
             .filter { it.productId.equals(productPriceUpdated.id) }
             .map {
-                it.price = computePrice.apply(it.productId!!, productPriceUpdated.price)
+                it.price = computePrice
+                    .apply(it.productId!!, productPriceUpdated.price)
+                    .multiply(BigDecimal(it.quantity!!))
+
                 return@map it
             }
 

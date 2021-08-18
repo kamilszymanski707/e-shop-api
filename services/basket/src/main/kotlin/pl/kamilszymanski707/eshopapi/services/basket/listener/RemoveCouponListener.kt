@@ -10,6 +10,7 @@ import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Comp
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
 import pl.kamilszymanski707.eshopapi.services.basket.data.repository.ShoppingCartRepository
+import java.math.BigDecimal
 
 @Component
 @RabbitListener(queues = [COUPON_REMOVED_QUEUE])
@@ -35,16 +36,16 @@ internal class RemoveCouponListener(
         cart: ShoppingCart,
         productId: String,
     ) {
-        val items = cart.items
+        cart.items = cart.items
             .filter { it.productId.equals(productId) }
             .map {
                 val product = catalogClient.getProductById(productId)
+
                 it.price = product.price
+                    .multiply(BigDecimal(it.quantity!!))
 
                 return@map it
             }
-
-        cart.items = items
 
         shoppingCartRepository.save(cart)
     }

@@ -42,9 +42,16 @@ internal class UpdateCouponAmountListener(
                 val product = catalogClient.getProductById(it.productId!!)
                 val amount = couponAmountUpdated.amount
 
+                val quantity = BigDecimal(it.quantity!!)
+
                 it.price =
-                    if (amount == 0) product.price
-                    else product.price.multiply(BigDecimal(amount.toDouble() / 100))
+                    if (amount == 0)
+                        product.price
+                            .multiply(quantity)
+                    else
+                        product.price
+                            .minus(product.price.multiply(BigDecimal(amount.toDouble() / 100)))
+                            .multiply(quantity)
 
                 return@map it
             }
