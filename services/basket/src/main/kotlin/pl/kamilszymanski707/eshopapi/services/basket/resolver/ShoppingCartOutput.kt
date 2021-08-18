@@ -10,5 +10,4 @@ data class ShoppingCartItemOutput(
     val productId: String,
     val quantity: Int,
     val price: BigDecimal,
-    val productName: String,
 )

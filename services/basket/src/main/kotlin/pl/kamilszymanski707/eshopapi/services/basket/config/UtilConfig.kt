@@ -23,7 +23,9 @@ internal class UtilConfig {
                     return@BiFunction price
 
                 val coupon = coupons!![0]
-                return@BiFunction price.multiply(BigDecimal(coupon.amount.toDouble() / 100))
+                val multiplied = price.multiply(BigDecimal(coupon.amount.toDouble() / 100))
+
+                return@BiFunction price.minus(multiplied)
             }
 
             return@BiFunction price

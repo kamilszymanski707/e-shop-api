@@ -47,6 +47,10 @@ class Product : QueryableProduct {
         return result
     }
 
+    override fun toString(): String {
+        return "Product(id=$id, name=$name, category=$category, price=$price)"
+    }
+
     companion object {
 
         fun createInstance(

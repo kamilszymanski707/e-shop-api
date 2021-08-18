@@ -32,6 +32,10 @@ class ShoppingCart {
         return result
     }
 
+    override fun toString(): String {
+        return "ShoppingCart(userId=$userId, items=$items)"
+    }
+
     companion object {
 
         fun createInstance(
@@ -53,7 +57,6 @@ class ShoppingCartItem {
     var productId: String? = null
     var quantity: Int? = null
     var price: BigDecimal? = null
-    var productName: String? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -64,7 +67,6 @@ class ShoppingCartItem {
         if (productId != other.productId) return false
         if (quantity != other.quantity) return false
         if (price != other.price) return false
-        if (productName != other.productName) return false
 
         return true
     }
@@ -73,22 +75,24 @@ class ShoppingCartItem {
         var result = productId?.hashCode() ?: 0
         result = 31 * result + (quantity ?: 0)
         result = 31 * result + (price?.hashCode() ?: 0)
-        result = 31 * result + (productName?.hashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "ShoppingCartItem(productId=$productId, quantity=$quantity, price=$price)"
     }
 
     companion object {
 
         fun createInstance(
             productId: String?, quantity: Int?,
-            price: BigDecimal?, productName: String?,
+            price: BigDecimal?,
         ): ShoppingCartItem {
 
             val result = ShoppingCartItem()
             result.productId = productId
             result.quantity = quantity
             result.price = price
-            result.productName = productName
             return result
         }
     }

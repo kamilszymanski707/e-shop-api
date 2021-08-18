@@ -5,7 +5,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.data.domain.Example
 import org.springframework.stereotype.Component
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_PRICE_UPDATED_QUEUE
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCart
 import pl.kamilszymanski707.eshopapi.services.basket.data.domain.ShoppingCartItem
@@ -24,40 +23,27 @@ internal class UpdateProductPriceListener(
 
     @RabbitHandler(isDefault = true)
     fun handle(bytea: ByteArray) {
-        val value = mapper.readValue(bytea, ProductPriceUpdated::class.java)
+        val productPriceUpdated = mapper.readValue(bytea, ProductPriceUpdated::class.java)
 
-        LOGGER.info("Message received {}", value.toString())
+        val shoppingCartItems = listOf(ShoppingCartItem.createInstance(productPriceUpdated.id, null, null))
+        val shoppingCart = ShoppingCart.createInstance(null, shoppingCartItems)
 
-        val example = Example.of(ShoppingCart.createInstance(null,
-            listOf(ShoppingCartItem.createInstance(value.id, null, null, null))))
-
-        val all = shoppingCartRepository.findAll(example)
-
-        all.forEach { handleUpdate(it, value) }
+        shoppingCartRepository.findAll(Example.of(shoppingCart))
+            .forEach { handleUpdate(it, productPriceUpdated) }
     }
 
     private fun handleUpdate(
         cart: ShoppingCart,
         productPriceUpdated: ProductPriceUpdated,
     ) {
-        LOGGER.info("Cart {}", cart.toString())
-        LOGGER.info("Product Price Updated {}", productPriceUpdated.toString())
-
-        val items = arrayListOf<ShoppingCartItem>()
-
-        for (item in cart.items) {
-            if (item.productId == productPriceUpdated.id) {
-                item.price = computePrice.apply(item.productId!!, productPriceUpdated.price)
+        cart.items = cart.items
+            .filter { it.productId.equals(productPriceUpdated.id) }
+            .map {
+                it.price = computePrice.apply(it.productId!!, productPriceUpdated.price)
+                return@map it
             }
 
-            items.add(item)
-        }
-
-        cart.items = items
-
         shoppingCartRepository.save(cart)
-
-        LOGGER.info("Shopping cart updated {}", cart.toString())
     }
 }
 

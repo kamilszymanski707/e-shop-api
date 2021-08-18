@@ -1,12 +1,8 @@
 #INPUT:
-#items              - REQUIRED
 #items.productId    - REQUIRED
 #items.quantity     - REQUIRED
-#items.price        - REQUIRED
-#items.productName  - REQUIRED
 
 #OUTPUT:
-#items              - OPTIONAL
 #items.productId    - OPTIONAL
 #items.quantity     - OPTIONAL
 #items.price        - OPTIONAL
@@ -16,7 +12,7 @@
 #SCRIPT INPUT: $1 - INPUT - REQUIRED, $2 - JWT - REQUIRED, $3 - OUTPUT - OPTIONAL
 #sh update-basket.sh '<INPUT>' '<JWT>' '<OUTPUT>'
 
-query='{ "query": "mutation { updateBasket(input: {'$1'}) { '
+query='{ "query": "mutation { updateBasket(input: { items: ['$1'] }) { '
 
 if [ -n "$3" ]
   then

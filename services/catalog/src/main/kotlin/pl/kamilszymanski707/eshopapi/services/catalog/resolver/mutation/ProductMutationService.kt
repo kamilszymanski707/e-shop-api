@@ -29,12 +29,12 @@ internal class ProductMutationService(
     }
 
     fun updateProduct(input: ProductUpdateInput): ProductOutput {
-        var optionalProduct = productRepository.findById(input.id)
+        val optionalProduct = productRepository.findById(input.id)
         if (optionalProduct.isEmpty)
             throw ResourceNotFoundException("Product with id: ${input.id} not found.")
 
-        optionalProduct = productRepository.findByName(input.name)
-        if (optionalProduct.isPresent && optionalProduct.get().name != input.name)
+        val optionalProductByName = productRepository.findByName(input.name)
+        if (optionalProductByName.isPresent && optionalProductByName.get().name != input.name)
             throw ResourceFoundException("Product with name: ${input.name} already exists.")
 
         val existingProduct = optionalProduct.get()

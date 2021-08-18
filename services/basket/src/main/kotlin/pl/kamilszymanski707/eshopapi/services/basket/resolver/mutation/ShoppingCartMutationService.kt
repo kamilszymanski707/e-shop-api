@@ -1,6 +1,5 @@
 package pl.kamilszymanski707.eshopapi.services.basket.resolver.mutation
 
-import org.springframework.context.annotation.Scope
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import pl.kamilszymanski707.eshopapi.lib.utilslib.client.CatalogClient
@@ -14,7 +13,6 @@ import java.math.BigDecimal
 import java.util.function.BiFunction
 
 @Service
-@Scope("prototype")
 internal class ShoppingCartMutationService(
     private val shoppingCartRepository: ShoppingCartRepository,
     private val catalogClient: CatalogClient,
@@ -34,11 +32,11 @@ internal class ShoppingCartMutationService(
 
         shoppingCart = shoppingCartRepository.save(shoppingCart)
 
-        val itemsList = shoppingCart.items.stream()
+        val itemsList = shoppingCart.items
             .map {
                 ShoppingCartItemOutput(
                     it.productId!!, it.quantity!!,
-                    it.price!!, it.productName!!)
+                    it.price!!)
             }
             .toList()
 
@@ -57,23 +55,58 @@ internal class ShoppingCartMutationService(
     }
 
     private fun updatedItems(items: List<ShoppingCartItemUpdateInput>): List<ShoppingCartItem> {
-        val shoppingCartItemList = ArrayList<ShoppingCartItem>()
+        val shoppingCartItemList = arrayListOf<ShoppingCartItem>()
 
-        items.forEach {
-            val productId = it.productId
+        items.stream()
+            .forEach {
+                val productId = it.productId
 
-            val searchedProduct = catalogClient.getProductById(productId)
+                val searchedProduct = catalogClient.getProductById(productId)
 
-            val updatedPrice = computePrice.apply(productId, searchedProduct.price)
+                val existingItem = shoppingCartItemList.find { item -> item.productId.equals(productId) }
 
-            val shoppingCartItem = ShoppingCartItem.createInstance(
-                productId, it.quantity,
-                updatedPrice, searchedProduct.name)
-
-            shoppingCartItemList.add(shoppingCartItem)
-        }
+                if (existingItem != null) {
+                    setExistingItem(shoppingCartItemList, existingItem, it.quantity, productId, searchedProduct.price)
+                } else {
+                    setNewItem(shoppingCartItemList, it.quantity, productId, searchedProduct.price)
+                }
+            }
 
         return shoppingCartItemList
+    }
+
+    private fun setExistingItem(
+        shoppingCartItemList: ArrayList<ShoppingCartItem>,
+        existingItem: ShoppingCartItem,
+        quantity: Int,
+        productId: String,
+        price: BigDecimal,
+    ) {
+        val existingItemIndex = shoppingCartItemList.indexOf(existingItem)
+        existingItem.quantity = existingItem.quantity!!.plus(quantity)
+
+        existingItem.price = computePrice
+            .apply(productId, price)
+            .multiply(BigDecimal(existingItem.quantity!!))
+
+        shoppingCartItemList[existingItemIndex] = existingItem
+    }
+
+    private fun setNewItem(
+        shoppingCartItemList: ArrayList<ShoppingCartItem>,
+        quantity: Int,
+        productId: String,
+        price: BigDecimal,
+    ) {
+        val updatedPrice = computePrice
+            .apply(productId, price)
+            .multiply(BigDecimal(quantity))
+
+        val shoppingCartItem = ShoppingCartItem.createInstance(
+            productId, quantity,
+            updatedPrice)
+
+        shoppingCartItemList.add(shoppingCartItem)
     }
 
     private fun getPrincipalId(): String =

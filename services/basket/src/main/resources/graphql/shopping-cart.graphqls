@@ -6,7 +6,6 @@ type ShoppingCartItemOutput {
     productId: String!
     quantity: Int!
     price: Float!
-    productName: String!
 }
 
 input ShoppingCartUpdateInput {

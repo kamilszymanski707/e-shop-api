@@ -61,6 +61,10 @@ class Coupon : QueryableCoupon {
         return result
     }
 
+    override fun toString(): String {
+        return "Coupon(id=$id, description=$description, productId=$productId, amount=$amount)"
+    }
+
     companion object {
 
         fun createInstance(

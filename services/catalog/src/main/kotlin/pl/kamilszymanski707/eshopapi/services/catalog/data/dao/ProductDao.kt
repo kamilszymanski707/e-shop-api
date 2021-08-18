@@ -21,7 +21,7 @@ class ProductDao(
 
     fun findByQuery(input: QueryableProduct?): List<Product> {
         return mongoTemplate.find(
-            Query().also { input?.let { query -> setConditions(query, it) } }, Product::class.java).stream()
+            Query().also { input?.let { query -> setConditions(query, it) } }, Product::class.java)
             .toList()
     }
 
