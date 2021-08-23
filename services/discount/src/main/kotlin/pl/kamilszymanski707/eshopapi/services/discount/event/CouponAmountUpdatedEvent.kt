@@ -5,7 +5,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.log
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.COUPON_AMOUNT_UPDATED_QUEUE
 
 class CouponAmountUpdatedEvent(
@@ -31,7 +31,7 @@ internal class CouponAmountUpdatedEventListener(
         val couponAmountUpdated = event.couponAmountUpdated
         val bytea = mapper.writeValueAsBytes(couponAmountUpdated)
 
-        LOGGER.info(
+        log.info(
             "Sending: {} to RabbitMQ Queue: {}",
             couponAmountUpdated,
             COUPON_AMOUNT_UPDATED_QUEUE)

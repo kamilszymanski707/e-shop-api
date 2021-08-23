@@ -5,7 +5,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.log
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.COUPON_REMOVED_QUEUE
 
 class CouponRemovedEvent(
@@ -26,7 +26,7 @@ internal class CouponRemovedEventListener(
         val productId = event.productId
         val bytea = mapper.writeValueAsBytes(productId)
 
-        LOGGER.info(
+        log.info(
             "Sending: {} to RabbitMQ Queue: {}",
             productId,
             COUPON_REMOVED_QUEUE)

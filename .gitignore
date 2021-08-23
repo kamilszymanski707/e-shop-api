@@ -379,3 +379,6 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,intellij+iml,intellij+all,gradle,forgegradle,maven,mavensmate,java,java-web,code-java,kotlin,groovy,git,gitbook,tortoisegit
+/services/basket/src/main/resources/logback-spring.xml
+/services/catalog/src/main/resources/logback-spring.xml
+/services/discount/src/main/resources/logback-spring.xml

@@ -7,6 +7,6 @@ class LoggerConstant {
 
     companion object {
 
-        val LOGGER: Logger = getLogger(this::class.java)
+        val log: Logger = getLogger(this::class.java)
     }
 }

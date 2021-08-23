@@ -117,7 +117,7 @@ services:
       - JAVA_OPTS=
         -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
-      context: ../core/eureka
+      context: ../../cloud-core/eureka
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
@@ -136,7 +136,7 @@ services:
         -DGIT_ROOT_SEARCH_PATH=${GIT_ROOT_SEARCH_PATH}
         -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
-      context: ../core/config
+      context: ../../cloud-core/config
       dockerfile: Dockerfile
     ports:
       - "8888:8888"
@@ -153,7 +153,7 @@ services:
         -DCONFIG_URI=${CONFIG_URI}
         -DLOGSTASH_HOST=${LOGSTASH_HOST}
     build:
-      context: ../core/gateway
+      context: ../../cloud-core/gateway
       dockerfile: Dockerfile
     ports:
       - "80:80"

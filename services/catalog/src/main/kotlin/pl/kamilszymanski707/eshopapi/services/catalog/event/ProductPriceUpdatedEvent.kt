@@ -5,7 +5,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.log
 import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.RabbitMQConstant.Companion.PRODUCT_PRICE_UPDATED_QUEUE
 import java.math.BigDecimal
 
@@ -32,7 +32,7 @@ internal class ProductPriceUpdatedEventListener(
         val productPriceUpdated = event.productPriceUpdated
         val bytea = mapper.writeValueAsBytes(productPriceUpdated)
 
-        LOGGER.info(
+        log.info(
             "Sending: {} to RabbitMQ Queue: {}",
             productPriceUpdated,
             PRODUCT_PRICE_UPDATED_QUEUE)

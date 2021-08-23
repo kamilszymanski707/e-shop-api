@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.client.RestTemplate
-import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.LOGGER
+import pl.kamilszymanski707.eshopapi.lib.utilslib.constant.LoggerConstant.Companion.log
 import pl.kamilszymanski707.eshopapi.lib.utilslib.exception.ResourceNotFoundException
 import java.net.URI
 
@@ -24,7 +24,7 @@ internal open class GraphQLClient<QL_OBJECT>(
                 HttpEntity(gql, headers),
                 clazz)
         } catch (e: Exception) {
-            LOGGER.error(e.message)
+            log.error(e.message)
             throw ResourceNotFoundException("Internal Server Error.")
         }
     }
