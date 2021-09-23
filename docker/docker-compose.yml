@@ -113,6 +113,7 @@ services:
   eureka:
     container_name: eureka
     image: eureka:${EUREKA_VERSION}
+    restart: on-failure
     environment:
       - JAVA_OPTS=
         -DLOGSTASH_HOST=${LOGSTASH_HOST}

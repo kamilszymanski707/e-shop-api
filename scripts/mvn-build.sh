@@ -5,6 +5,7 @@ cp spring-resources/logback-spring.xml "../../cloud-core/eureka/src/main/resourc
 cp spring-resources/logback-spring.xml "../../cloud-core/config/src/main/resources" && \
 cp spring-resources/logback-spring.xml "../../cloud-core/gateway/src/main/resources" && \
 cp spring-resources/git-config.properties "../../cloud-core/config/src/main/resources" && \
+cp spring-resources/gateway-allowed-routes.properties "../../cloud-core/gateway/src/main/resources" && \
 cd .. \
 && cd lib \
   && cd security-lib && mvn clean install -DskipTests \
